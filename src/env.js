@@ -21,11 +21,11 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_SUPABASE_URL: z.string(),
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string(),
-    NEXT_PUBLIC_PEER_HOST: z.string(),
-    NEXT_PUBLIC_PEER_PORT: z.number({ coerce: true }),
-    NEXT_PUBLIC_ICE_SERVER: z.string(),
-    NEXT_PUBLIC_ICE_USER: z.string(),
-    NEXT_PUBLIC_ICE_CRED: z.string(),
+    NEXT_PUBLIC_PEER_HOST: z.string().default("localhost"),
+    NEXT_PUBLIC_PEER_PORT: z.number({ coerce: true }).default(9000),
+    NEXT_PUBLIC_ICE_SERVER: z.string().optional(),
+    NEXT_PUBLIC_ICE_USER: z.string().optional(),
+    NEXT_PUBLIC_ICE_CRED: z.string().optional(),
   },
 
   /**
