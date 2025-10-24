@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { MediaConnection, Peer, type PeerOptions } from "peerjs";
+import { type MediaConnection, Peer, type PeerOptions } from "peerjs";
 
 export const peerBuildConnection = (id?: string) => {
   const options: PeerOptions = {
@@ -22,12 +22,12 @@ export const peerBuildConnection = (id?: string) => {
 };
 
 export const useVideoStream = (callback: (stream: MediaStream) => void | Promise<void>) => {
-  navigator.mediaDevices
+  void navigator.mediaDevices
     .getUserMedia({ video: { aspectRatio: 16 / 9 }, audio: true })
     .then(callback);
 };
 
-export const placePeerCall = (peer: Peer, peerIdToCall: string, stream: MediaStream, callback: (stream: MediaStream) => void | Promise<void> ) => {
+export const placePeerCall = (peer: Peer, peerIdToCall: string, stream: MediaStream, callback: (stream: MediaStream) => void) => {
   const call = peer.call(peerIdToCall, stream);
   call.on("stream", callback);
 }
