@@ -8,14 +8,16 @@ import { useOnboardingStore } from "@/stores/onboarding";
 
 export default function StudentSummary() {
     const role = useOnboardingStore((s) => s.role);
+    const hydrated = useOnboardingStore((s) => s.hydrated);
     const goals = Array.from(useOnboardingStore((s) => s.goals));
     const style = Array.from(useOnboardingStore((s) => s.style));
     const gender = useOnboardingStore((s) => s.preferredTutorGender);
     const router = useRouter();
 
     useEffect(() => {
+        if (!hydrated) return;
         if (role !== "student") router.replace("/onboarding");
-    }, [role, router]);
+    }, [hydrated, role, router]);
 
     return (
         <div className="min-h-screen w-full bg-linear-to-b from-white via-blue-50 to-[#43A8FF]">

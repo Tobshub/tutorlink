@@ -19,14 +19,16 @@ const GOALS: LearningGoal[] = [
 
 export default function StudentGoals() {
     const role = useOnboardingStore((s) => s.role);
+    const hydrated = useOnboardingStore((s) => s.hydrated);
     const goals = useOnboardingStore((s) => s.goals);
     const toggleGoal = useOnboardingStore((s) => s.toggleGoal);
     const router = useRouter();
 
-    // Guard: ensure the user picked 'student' role
+    // Guard: ensure the user picked 'student' role (wait for hydration)
     useEffect(() => {
+        if (!hydrated) return;
         if (role !== "student") router.replace("/onboarding");
-    }, [role, router]);
+    }, [hydrated, role, router]);
 
     return (
         <div className="min-h-screen w-full bg-linear-to-b from-white via-blue-50 to-[#43A8FF]">

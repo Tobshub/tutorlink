@@ -18,13 +18,15 @@ const STYLES: LearningStyle[] = [
 
 export default function StudentStyle() {
     const role = useOnboardingStore((s) => s.role);
+    const hydrated = useOnboardingStore((s) => s.hydrated);
     const style = useOnboardingStore((s) => s.style);
     const toggleStyle = useOnboardingStore((s) => s.toggleStyle);
     const router = useRouter();
 
     useEffect(() => {
+        if (!hydrated) return;
         if (role !== "student") router.replace("/onboarding");
-    }, [role, router]);
+    }, [hydrated, role, router]);
 
     return (
         <div className="min-h-screen w-full bg-linear-to-b from-white via-blue-50 to-[#43A8FF]">

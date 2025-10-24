@@ -50,6 +50,8 @@ export type TeachingStyle =
 export type SessionType = "Live" | "On-Demand" | "Recorded";
 
 export type OnboardingState = {
+    // hydration flag to avoid redirecting before persist finishes
+    hydrated: boolean;
     role: UserRole;
     goals: Set<LearningGoal>;
     style: Set<LearningStyle>;
@@ -78,7 +80,8 @@ export type OnboardingState = {
     reset: () => void;
 };
 
-const initial: Pick<OnboardingState, "role" | "goals" | "style" | "preferredTutorGender" | "subjectInterests" | "teachingLevels" | "yearsOfExperience" | "teachingStyle" | "preferredSessionTypes"> = {
+const initial: Pick<OnboardingState, "hydrated" | "role" | "goals" | "style" | "preferredTutorGender" | "subjectInterests" | "teachingLevels" | "yearsOfExperience" | "teachingStyle" | "preferredSessionTypes"> = {
+    hydrated: false,
     role: null,
     goals: new Set<LearningGoal>(),
     style: new Set<LearningStyle>(),
@@ -169,6 +172,7 @@ export const useOnboardingStore = create<OnboardingState>()(
             storage: createJSONStorage(() => sessionStorage),
             // Convert Sets to arrays for persistence
             partialize: (state) => ({
+                // do not persist hydrated flag
                 role: state.role,
                 goals: Array.from(state.goals),
                 style: Array.from(state.style),
@@ -208,6 +212,8 @@ export const useOnboardingStore = create<OnboardingState>()(
                 if (Array.isArray(hydratedState.preferredSessionTypes)) {
                     state.preferredSessionTypes = new Set(hydratedState.preferredSessionTypes);
                 }
+                // mark store as hydrated after persistence is applied
+                state.hydrated = true;
             },
         }
     )
