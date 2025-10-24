@@ -11,9 +11,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
+type activeClass = "#home" | "#about" | "#how-it-works" | "#find-tutors" | "#edu-feed" | "#contact";
+
 export function Navbar() {
     const [open, setOpen] = useState(false);
-    const [active, setActive] = useState<string>("#home");
+    const [active, setActive] = useState<activeClass>("#home");
 
     return (
         <nav className="tl-nav flex items-center justify-between rounded-2xl bg-white px-4 py-3 shadow-sm sm:px-6">
