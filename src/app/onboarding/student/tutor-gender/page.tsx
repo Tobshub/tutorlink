@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Navbar } from "@/app/_components/navbar";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { useOnboardingStore, type TutorGender } from "@/stores/onboarding";
@@ -24,7 +23,6 @@ export default function StudentTutorGender() {
     return (
         <div className="min-h-screen w-full bg-linear-to-b from-white via-blue-50 to-[#43A8FF]">
             <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
-                <Navbar />
 
                 <main className="mx-auto mt-10 max-w-2xl rounded-2xl bg-white/70 p-6 shadow-sm backdrop-blur sm:mt-14 sm:p-8">
                     <h2 className="mb-2 font-poppins text-2xl font-semibold text-neutral-800">Preferred Tutor Gender</h2>
