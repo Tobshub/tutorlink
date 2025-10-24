@@ -55,7 +55,7 @@ export function SignupForm({ onEmailPasswordSubmit, onGoogle }: SignupFormProps)
             } else {
                 await authSignUpWithEmail(parsed.data);
             }
-            router.replace("/");
+            router.replace("/onboarding");
         } catch (err) {
             console.error("[signup] error", err);
         } finally {
@@ -66,7 +66,11 @@ export function SignupForm({ onEmailPasswordSubmit, onGoogle }: SignupFormProps)
     const handleGoogle = async () => {
         try {
             if (onGoogle) await onGoogle();
-            else await authLoginWithGoogle({ redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined });
+            else {
+                const origin = typeof window !== 'undefined' ? window.location.origin : undefined;
+                const redirectTo = origin ? `${origin}/onboarding` : undefined;
+                await authLoginWithGoogle({ redirectTo });
+            }
         } catch (err) {
             console.error("[signup] google error", err);
         }

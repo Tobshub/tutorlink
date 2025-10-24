@@ -1,5 +1,7 @@
 import { createCallerFactory, createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { onboardingRouter } from "./routers/onboarding";
+import { tutorRouter } from "@/server/api/routers/tutor";
+import { studentRouter } from "@/server/api/routers/student";
 
 /**
  * This is the primary router for your server.
@@ -8,7 +10,9 @@ import { onboardingRouter } from "./routers/onboarding";
  */
 export const appRouter = createTRPCRouter({
   health: publicProcedure.query(() => "OK"),
-  onboarding: onboardingRouter
+  onboarding: onboardingRouter,
+  tutor: tutorRouter,
+  student: studentRouter,
 });
 
 // export type definition of API

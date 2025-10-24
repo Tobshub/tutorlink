@@ -70,7 +70,7 @@ export function LoginForm({ onEmailPasswordSubmit, onGoogleLogin }: LoginFormPro
             } else {
                 await authLoginWithEmail({ email, password });
             }
-            router.replace("/");
+            router.replace("/onboarding");
         } catch (err) {
             console.error("[login] auth error", err);
         } finally {
@@ -82,7 +82,11 @@ export function LoginForm({ onEmailPasswordSubmit, onGoogleLogin }: LoginFormPro
     const handleGoogle = async () => {
         try {
             if (onGoogleLogin) await onGoogleLogin();
-            else await authLoginWithGoogle({ redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined });
+            else {
+                const origin = typeof window !== 'undefined' ? window.location.origin : undefined;
+                const redirectTo = origin ? `${origin}/onboarding` : undefined;
+                await authLoginWithGoogle({ redirectTo });
+            }
         } catch (err) {
             console.error("[login] google error", err);
         }
