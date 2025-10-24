@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Navbar } from "@/app/_components/navbar";
 import { HeroIllustration } from "@/app/_components/hero-illustration";
 import { Button } from "@/components/ui/button";
-import { SectionPill } from "./_components/section-pill";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
@@ -89,46 +88,263 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Stub sections for in-page navigation - replace with real content later */}
-        <section id="about" className="scroll-mt-24 py-16 sm:py-24">
-          <Card className="mx-auto max-w-4xl">
-            <CardContent className="p-6">
-              <h2 className="mb-2 text-2xl font-semibold">About</h2>
-              <p className="text-neutral-700">This section will explain what TutorLink is about.</p>
-            </CardContent>
-          </Card>
+        {/* About Section */}
+        <section id="about" className="scroll-mt-24 py-12 sm:py-16 lg:py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <Card className="overflow-hidden bg-white/90 backdrop-blur-sm shadow-lg">
+              <CardContent className="p-0">
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
+                  {/* Left Side - Illustration */}
+                  <div className="relative p-6 sm:p-8 lg:p-12">
+                    <div className="aspect-square w-full max-w-md mx-auto lg:mx-0">
+                      <img
+                        src="/images/Group 46.png"
+                        alt="TutorLink learning platform illustration"
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Right Side - Content */}
+                  <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-12">
+                    <h2 className="mb-6 font-poppins text-2xl font-semibold text-neutral-900 sm:text-3xl lg:text-4xl">
+                      About TutorLink
+                    </h2>
+                    <p className="mb-6 text-base leading-relaxed text-neutral-700 sm:text-lg">
+                      TutorLink is an intelligent learning platform built to make finding and connecting with the right tutor simple, instant, and meaningful.
+                    </p>
+                    <p className="mb-8 text-base leading-relaxed text-neutral-700 sm:text-lg">
+                      We use advanced AI to match students with tutors based on learning style, subject needs, and availability — so every session feels personalized and productive.
+                    </p>
+                    <div className="text-right">
+                      <Link
+                        href="#how-it-works"
+                        className="inline-flex items-center text-sm font-medium text-[#1E88FF] underline-offset-4 hover:underline"
+                      >
+                        See More
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </section>
 
-        <section id="how-it-works" className="scroll-mt-24 py-16 sm:py-24">
-          <Card className="mx-auto max-w-4xl">
-            <CardContent className="p-6">
-              <div className="mb-3">
-                <SectionPill>FOR TUTORS</SectionPill>
+        {/* How It Works Section */}
+        <section id="how-it-works" className="scroll-mt-24 py-12 sm:py-16 lg:py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            {/* For Students */}
+            <div className="mb-16 lg:mb-20">
+              <div className="mb-8 rounded-2xl bg-[#1E88FF] px-6 py-4 text-center">
+                <h3 className="font-poppins text-xl font-bold text-white sm:text-2xl">FOR STUDENTS</h3>
               </div>
-              <h2 className="mb-2 text-2xl font-semibold">How It Works</h2>
-              <p className="text-neutral-700">Overview of how students connect with verified tutors.</p>
-            </CardContent>
-          </Card>
+
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
+                {/* Steps */}
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">1</div>
+                    <div>
+                      <span className="font-semibold text-neutral-900">Create</span>
+                      <span className="text-[#1E88FF]"> Your Profile</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">2</div>
+                    <div>
+                      <span className="font-semibold text-neutral-900">Get</span>
+                      <span className="text-[#1E88FF]"> Matched Instantly</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">3</div>
+                    <div>
+                      <span className="font-semibold text-neutral-900">Start</span>
+                      <span className="text-[#1E88FF]"> a Live Session</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">4</div>
+                    <div>
+                      <span className="font-semibold text-neutral-900">Review</span>
+                      <span className="text-[#1E88FF]"> with AI Summaries</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Illustration */}
+                <div className="flex justify-center lg:justify-end">
+                  <div className="w-full max-w-sm">
+                    <img
+                      src="/images/Group 47.png"
+                      alt="Student learning process illustration"
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* For Tutors */}
+            <div>
+              <div className="mb-8 rounded-2xl bg-[#1E88FF] px-6 py-4 text-center">
+                <h3 className="font-poppins text-xl font-bold text-white sm:text-2xl">FOR TUTORS</h3>
+              </div>
+
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
+                {/* Steps */}
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">1</div>
+                    <div>
+                      <span className="font-semibold text-neutral-900">Create</span>
+                      <span className="text-[#1E88FF]"> Your Profile</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">2</div>
+                    <div>
+                      <span className="font-semibold text-neutral-900">Get</span>
+                      <span className="text-[#1E88FF]"> Matched Instantly</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">3</div>
+                    <div>
+                      <span className="font-semibold text-neutral-900">Start</span>
+                      <span className="text-[#1E88FF]"> a Live Session</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">4</div>
+                    <div>
+                      <span className="font-semibold text-neutral-900">Review</span>
+                      <span className="text-[#1E88FF]"> with AI Summaries</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Illustration */}
+                <div className="flex justify-center lg:justify-end">
+                  <div className="w-full max-w-sm">
+                    <img
+                      src="/images/Group 46.png"
+                      alt="Tutor teaching process illustration"
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
-        {/* Removed 'Find Tutors' section. That nav item now routes users to the Login/Sign up flow. */}
-
-        <section id="edu-feed" className="scroll-mt-24 py-16 sm:py-24">
-          <Card className="mx-auto max-w-4xl">
-            <CardContent className="p-6">
-              <h2 className="mb-2 text-2xl font-semibold">Edu Feed</h2>
-              <p className="text-neutral-700">AI-powered notes and updates will live here.</p>
-            </CardContent>
-          </Card>
+        {/* Find Tutors Section */}
+        <section id="find-tutors" className="scroll-mt-24 py-16 sm:py-20 lg:py-24">
+          <div className="relative overflow-hidden rounded-3xl bg-linear-to-b from-[#1E88FF] via-white to-[#1E88FF]">
+            <div className="relative mx-auto max-w-4xl px-6 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
+              <div className="text-center">
+                <h2 className="mb-8 font-poppins text-3xl font-bold text-neutral-900 sm:text-4xl lg:text-5xl">
+                  FIND TUTORS
+                </h2>
+                <div className="mt-12">
+                  <p className="font-poppins text-lg font-medium text-neutral-900 sm:text-xl">
+                    Getting <em>help</em> or sharing your <strong>knowledge</strong> has never been <em><strong>easier.</strong></em>
+                  </p>
+                </div>
+                <div className="mt-8">
+                  <Button
+                    asChild
+                    variant="brand"
+                    size="lg"
+                    className="rounded-full px-8 py-4 text-lg font-semibold shadow-lg"
+                  >
+                    <Link href="/signup">FOR STUDENTS</Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
-        <section id="contact" className="scroll-mt-24 py-16 sm:py-24">
-          <Card className="mx-auto max-w-4xl">
-            <CardContent className="p-6">
-              <h2 className="mb-2 text-2xl font-semibold">Contact</h2>
-              <p className="text-neutral-700">Get in touch with the TutorLink team.</p>
-            </CardContent>
-          </Card>
+        {/* EduFeed Section */}
+        <section id="edu-feed" className="scroll-mt-24 py-16 sm:py-20 lg:py-24">
+          <div className="relative overflow-hidden rounded-3xl bg-linear-to-b from-[#1E88FF] via-white to-[#1E88FF]">
+            <div className="relative mx-auto max-w-4xl px-6 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
+              <div className="text-center">
+                <h2 className="font-poppins text-3xl font-bold text-neutral-900 sm:text-4xl lg:text-5xl">
+                  EduFeed
+                </h2>
+                <div className="mt-8">
+                  <p className="text-lg text-neutral-700 sm:text-xl">
+                    AI-powered study notes and educational content tailored to your learning journey.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Section */}
+        <section id="contact" className="scroll-mt-24 py-16 sm:py-20 lg:py-24">
+          <div className="rounded-3xl bg-linear-to-b from-[#1E88FF] to-[#1669D6] px-6 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
+            <div className="mx-auto max-w-6xl">
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                {/* Contact Us */}
+                <div className="text-center md:text-left">
+                  <h3 className="mb-4 font-poppins text-xl font-bold italic text-white sm:text-2xl">
+                    Contact Us
+                  </h3>
+                  <p className="mb-4 text-white">
+                    Got a question, suggestion, or partnership idea?
+                  </p>
+                  <div className="flex items-center justify-center gap-2 text-white md:justify-start">
+                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                    <span>admin@tutorlink.com</span>
+                  </div>
+                </div>
+
+                {/* Phone & Email */}
+                <div className="text-center md:text-left">
+                  <h3 className="mb-4 font-poppins text-xl font-bold italic text-white sm:text-2xl">
+                    Phone & Email
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-center gap-2 text-white md:justify-start">
+                      <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                      </svg>
+                      <span>+234 **********</span>
+                      {/* TODO: Add actual phone number */}
+                    </div>
+                    <div className="flex items-center justify-center gap-2 text-white md:justify-start">
+                      <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                      </svg>
+                      <span>+234 **********</span>
+                      {/* TODO: Add actual phone number */}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Info */}
+                <div className="text-center md:text-left">
+                  <h3 className="mb-4 font-poppins text-xl font-bold italic text-white sm:text-2xl">
+                    Info
+                  </h3>
+                  <div className="text-white">
+                    <p className="mb-2">Lines are open:</p>
+                    <p className="font-medium">Monday - Friday</p>
+                    <p className="font-medium">9:00am - 5:30pm</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
       </div>
     </div>
