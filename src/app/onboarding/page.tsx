@@ -19,21 +19,41 @@ export default function OnboardingIndex() {
                     </h1>
 
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                        <button
-                            className="rounded-2xl border border-neutral-200 bg-white p-6 text-center shadow-sm transition-all duration-200 hover:shadow-lg hover:border-[#1E88FF] hover:bg-blue-50 md:p-8"
-                            onClick={() => setRole("student")}
-                        >
-                            <div className="mx-auto mb-3 h-16 w-16 rounded-full border border-neutral-300 bg-blue-100" />
-                            <div className="text-lg font-semibold">Student</div>
-                        </button>
+                        {(() => {
+                            const isStudent = role === "student";
+                            return (
+                                <button
+                                    aria-pressed={isStudent}
+                                    className={`rounded-2xl p-6 text-center transition-all duration-200 md:p-8
+                                        border ${isStudent ? "border-[#1E88FF]" : "border-neutral-200"}
+                                        ${isStudent ? "bg-blue-50" : "bg-white"}
+                                        ${isStudent ? "shadow-lg" : "shadow-sm"}
+                                        hover:shadow-lg hover:border-[#1E88FF] hover:bg-blue-50`}
+                                    onClick={() => setRole("student")}
+                                >
+                                    <div className="mx-auto mb-3 h-16 w-16 rounded-full border border-neutral-300 bg-blue-100" />
+                                    <div className="text-lg font-semibold">Student</div>
+                                </button>
+                            );
+                        })()}
 
-                        <button
-                            className="rounded-2xl border border-neutral-200 bg-white p-6 text-center shadow-sm transition-all duration-200 hover:shadow-lg hover:border-[#1E88FF] hover:bg-blue-50 md:p-8"
-                            onClick={() => setRole("tutor")}
-                        >
-                            <div className="mx-auto mb-3 h-16 w-16 rounded-full border border-neutral-300 bg-blue-100" />
-                            <div className="text-lg font-semibold">Tutor</div>
-                        </button>
+                        {(() => {
+                            const isTutor = role === "tutor";
+                            return (
+                                <button
+                                    aria-pressed={isTutor}
+                                    className={`rounded-2xl p-6 text-center transition-all duration-200 md:p-8
+                                        border ${isTutor ? "border-[#1E88FF]" : "border-neutral-200"}
+                                        ${isTutor ? "bg-blue-50" : "bg-white"}
+                                        ${isTutor ? "shadow-lg" : "shadow-sm"}
+                                        hover:shadow-lg hover:border-[#1E88FF] hover:bg-blue-50`}
+                                    onClick={() => setRole("tutor")}
+                                >
+                                    <div className="mx-auto mb-3 h-16 w-16 rounded-full border border-neutral-300 bg-blue-100" />
+                                    <div className="text-lg font-semibold">Tutor</div>
+                                </button>
+                            );
+                        })()}
                     </div>
 
                     <div className="mt-8 text-center">
