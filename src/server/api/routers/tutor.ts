@@ -3,7 +3,6 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/
 
 // TODO: Implement tutor profile creation and updates
 export const tutorRouter = createTRPCRouter({
-    // TODO: Create tutor profile after onboarding completion
     createProfile: protectedProcedure
         .input(z.object({
             subjectInterests: z.array(z.string()),
@@ -12,23 +11,36 @@ export const tutorRouter = createTRPCRouter({
             teachingStyle: z.array(z.string()),
             preferredSessionTypes: z.array(z.string()),
         }))
-        .mutation(async ({ input }) => {
-            // TODO: Implement tutor profile creation logic
-            // This should create a TutorProfile record in the database
-            console.log("Creating tutor profile:", input);
-            return { success: true, message: "Tutor profile created successfully" };
+        .mutation(async ({ ctx, input }) => {
+            const existingProfile = await ctx.db.tutorProfile.findUnique({
+                where: { userId: ctx.user.id },
+            });
+
+            if (existingProfile) {
+                return { success: false, message: "Tutor profile already exists" };
+            }
+
+            const profile = await ctx.db.tutorProfile.create({
+                data: {
+                    userId: ctx.user.id,
+                    subjectInterests: input.subjectInterests,
+                    teachingLevels: input.teachingLevels,
+                    yearsOfExperience: input.yearsOfExperience,
+                    teachingStyle: input.teachingStyle,
+                },
+            });
+
+            return { success: true, message: "Tutor profile created successfully", profile };
         }),
 
-    // TODO: Get tutor profile for current user
     getProfile: protectedProcedure
         .query(async ({ ctx }) => {
-            // TODO: Implement tutor profile retrieval logic
-            // This should fetch the TutorProfile for the current user
-            console.log("Getting tutor profile for user:", ctx.user.id);
-            return null;
+            const profile = await ctx.db.tutorProfile.findUnique({
+                where: { userId: ctx.user.id },
+            });
+            return profile;
         }),
 
-    // TODO: Update tutor profile
     updateProfile: protectedProcedure
         .input(z.object({
             subjectInterests: z.array(z.string()).optional(),
@@ -37,10 +49,14 @@ export const tutorRouter = createTRPCRouter({
             teachingStyle: z.array(z.string()).optional(),
             preferredSessionTypes: z.array(z.string()).optional(),
         }))
-        .mutation(async ({ input }) => {
-            // TODO: Implement tutor profile update logic
-            console.log("Updating tutor profile:", input);
-            return { success: true, message: "Tutor profile updated successfully" };
+        .mutation(async ({ ctx, input }) => {
+            const updatedProfile = await ctx.db.tutorProfile.update({
+                where: { userId: ctx.user.id },
+                data: {
+                    ...input,
+                },
+            });
+            return { success: true, message: "Tutor profile updated successfully", profile: updatedProfile };
         }),
 
     // Health check

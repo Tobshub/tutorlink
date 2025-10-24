@@ -44,7 +44,7 @@ model TutorProfile {
   teachingLevels    String[]
   yearsOfExperience Int
 
-  teachingStyle    String
+  teachingStyle    String[]
   tutorCredentials TutorCredentials[]
 
   embedding Unsupported("vector")?
@@ -72,7 +72,7 @@ model StudentProfile {
   goals                String[]
   subjectInterests     String[]
   learningStyle        String[]
-  preferredTutorGender String
+  preferredTutorGender String?
 
   studentGrades StudentGrades[]
 

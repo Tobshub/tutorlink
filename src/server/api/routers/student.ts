@@ -3,40 +3,56 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/
 
 // TODO: Implement student profile creation and updates
 export const studentRouter = createTRPCRouter({
-    // TODO: Create student profile after onboarding completion
     createProfile: protectedProcedure
         .input(z.object({
             goals: z.array(z.string()),
             learningStyle: z.array(z.string()),
             preferredTutorGender: z.string().optional(),
         }))
-        .mutation(async ({ input }) => {
-            // TODO: Implement student profile creation logic
-            // This should create a StudentProfile record in the database
-            console.log("Creating student profile:", input);
-            return { success: true, message: "Student profile created successfully" };
+        .mutation(async ({ ctx, input }) => {
+            const existingProfile = await ctx.db.studentProfile.findUnique({
+                where: { userId: ctx.user.id },
+            });
+
+            if (existingProfile) {
+                return { success: false, message: "Student profile already exists" };
+            }
+
+            const profile = await ctx.db.studentProfile.create({
+                data: {
+                    userId: ctx.user.id,
+                    goals: input.goals,
+                    learningStyle: input.learningStyle,
+                    preferredTutorGender: input.preferredTutorGender,
+                    subjectInterests: [],
+                },
+            });
+
+            return { success: true, message: "Student profile created successfully", profile };
         }),
 
-    // TODO: Get student profile for current user
     getProfile: protectedProcedure
         .query(async ({ ctx }) => {
-            // TODO: Implement student profile retrieval logic
-            // This should fetch the StudentProfile for the current user
-            console.log("Getting student profile for user:", ctx.user.id);
-            return null;
+            const profile = await ctx.db.studentProfile.findUnique({
+                where: { userId: ctx.user.id },
+            });
+            return profile;
         }),
 
-    // TODO: Update student profile
     updateProfile: protectedProcedure
         .input(z.object({
             goals: z.array(z.string()).optional(),
             learningStyle: z.array(z.string()).optional(),
             preferredTutorGender: z.string().optional(),
         }))
-        .mutation(async ({ input }) => {
-            // TODO: Implement student profile update logic
-            console.log("Updating student profile:", input);
-            return { success: true, message: "Student profile updated successfully" };
+        .mutation(async ({ ctx, input }) => {
+            const updatedProfile = await ctx.db.studentProfile.update({
+                where: { userId: ctx.user.id },
+                data: {
+                    ...input,
+                },
+            });
+            return { success: true, message: "Student profile updated successfully", profile: updatedProfile };
         }),
 
     // Health check
