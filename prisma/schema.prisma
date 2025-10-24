@@ -44,7 +44,7 @@ model TutorProfile {
   teachingLevels    String[]
   yearsOfExperience Int
 
-  teachingStyle    String
+  teachingStyle    String[]
   tutorCredentials TutorCredentials[]
 
   embedding Unsupported("vector")?
