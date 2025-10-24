@@ -11,9 +11,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
+type activeClass = "#home" | "#about" | "#how-it-works" | "#find-tutors" | "#edu-feed" | "#contact";
+
 export function Navbar() {
     const [open, setOpen] = useState(false);
-    const [active, setActive] = useState<string>("#home");
+    const [active, setActive] = useState<activeClass>("#home");
 
     return (
         <nav className="tl-nav flex items-center justify-between rounded-2xl bg-white px-4 py-3 shadow-sm sm:px-6">
@@ -34,7 +36,7 @@ export function Navbar() {
                                     className={cn(
                                         "text-sm font-medium",
                                         active === "#home"
-                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-md"
+                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs hover:text-black!"
                                             : "text-neutral-700 hover:text-neutral-900"
                                     )}
                                 >
@@ -50,7 +52,7 @@ export function Navbar() {
                                     className={cn(
                                         "text-sm font-medium",
                                         active === "#about"
-                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-md"
+                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs hover:text-black!"
                                             : "text-neutral-700 hover:text-neutral-900"
                                     )}
                                 >
@@ -66,7 +68,7 @@ export function Navbar() {
                                     className={cn(
                                         "text-sm font-medium",
                                         active === "#how-it-works"
-                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-md"
+                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs hover:text-black!"
                                             : "text-neutral-700 hover:text-neutral-900"
                                     )}
                                 >
@@ -82,7 +84,7 @@ export function Navbar() {
                                     className={cn(
                                         "text-sm font-medium",
                                         active === "#find-tutors"
-                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-md"
+                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs hover:text-black!"
                                             : "text-neutral-700 hover:text-neutral-900"
                                     )}
                                 >
@@ -98,7 +100,7 @@ export function Navbar() {
                                     className={cn(
                                         "text-sm font-medium",
                                         active === "#edu-feed"
-                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-md"
+                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs hover:text-black!"
                                             : "text-neutral-700 hover:text-neutral-900"
                                     )}
                                 >
@@ -114,7 +116,7 @@ export function Navbar() {
                                     className={cn(
                                         "text-sm font-medium",
                                         active === "#contact"
-                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-md"
+                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs hover:text-black!"
                                             : "text-neutral-700 hover:text-neutral-900"
                                     )}
                                 >
@@ -124,6 +126,16 @@ export function Navbar() {
                         </NavigationMenuItem>
                     </NavigationMenuList>
                 </NavigationMenu>
+            </div>
+
+            {/* Desktop CTAs */}
+            <div className="hidden items-center gap-3 md:flex">
+                <Button asChild variant="brandOutline" size="lg" className="rounded-full">
+                    <Link href="/login" aria-label="Log in to TutorLink">Log in</Link>
+                </Button>
+                <Button asChild variant="brand" size="lg" className="rounded-full shadow-md">
+                    <Link href="/signup" aria-label="Create a TutorLink account" className="hover:text-black/90!">Sign up</Link>
+                </Button>
             </div>
 
             {/* Mobile Nav */}
@@ -145,7 +157,7 @@ export function Navbar() {
                         </Button>
                     </SheetTrigger>
                     <SheetContent side="right" className="w-64 px-3">
-                        <div className="mt-6 flex flex-col gap-4 font-poppins">
+                        <div className="mt-6 flex flex-col gap-1 font-poppins">
                             <Link
                                 href="#home"
                                 onClick={() => {
@@ -153,10 +165,10 @@ export function Navbar() {
                                     setOpen(false);
                                 }}
                                 className={cn(
-                                    "text-sm font-medium",
+                                    "text-sm font-medium px-3 py-2",
                                     active === "#home"
-                                        ? "text-[#1E88FF] bg-[--brand-100] rounded-md"
-                                        : "text-neutral-700 hover:text-neutral-900"
+                                        ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs"
+                                        : "text-neutral-700 hover:text-neutral-900 hover:bg-[--brand-100] rounded-full"
                                 )}
                             >
                                 Home
@@ -168,10 +180,10 @@ export function Navbar() {
                                     setOpen(false);
                                 }}
                                 className={cn(
-                                    "text-sm font-medium",
+                                    "text-sm font-medium px-3 py-2",
                                     active === "#about"
-                                        ? "text-[#1E88FF] bg-[--brand-100] rounded-md"
-                                        : "text-neutral-700 hover:text-neutral-900"
+                                        ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs"
+                                        : "text-neutral-700 hover:text-neutral-900 hover:bg-[--brand-100] rounded-full"
                                 )}
                             >
                                 About
@@ -183,10 +195,10 @@ export function Navbar() {
                                     setOpen(false);
                                 }}
                                 className={cn(
-                                    "text-sm font-medium",
+                                    "text-sm font-medium px-3 py-2",
                                     active === "#how-it-works"
-                                        ? "text-[#1E88FF] bg-[--brand-100] rounded-md"
-                                        : "text-neutral-700 hover:text-neutral-900"
+                                        ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs"
+                                        : "text-neutral-700 hover:text-neutral-900 hover:bg-[--brand-100] rounded-full"
                                 )}
                             >
                                 How It Works
@@ -198,10 +210,10 @@ export function Navbar() {
                                     setOpen(false);
                                 }}
                                 className={cn(
-                                    "text-sm font-medium",
+                                    "text-sm font-medium px-3 py-2",
                                     active === "#find-tutors"
-                                        ? "text-[#1E88FF] bg-[--brand-100] rounded-md"
-                                        : "text-neutral-700 hover:text-neutral-900"
+                                        ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs"
+                                        : "text-neutral-700 hover:text-neutral-900 hover:bg-[--brand-100] rounded-full"
                                 )}
                             >
                                 Find Tutors
@@ -213,10 +225,10 @@ export function Navbar() {
                                     setOpen(false);
                                 }}
                                 className={cn(
-                                    "text-sm font-medium",
+                                    "text-sm font-medium px-3 py-2",
                                     active === "#edu-feed"
-                                        ? "text-[#1E88FF] bg-[--brand-100] rounded-md"
-                                        : "text-neutral-700 hover:text-neutral-900"
+                                        ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs"
+                                        : "text-neutral-700 hover:text-neutral-900 hover:bg-[--brand-100] rounded-full"
                                 )}
                             >
                                 Edu Feed
@@ -228,14 +240,28 @@ export function Navbar() {
                                     setOpen(false);
                                 }}
                                 className={cn(
-                                    "text-sm font-medium",
+                                    "text-sm font-medium px-3 py-2",
                                     active === "#contact"
-                                        ? "text-[#1E88FF] bg-[--brand-100] rounded-md"
-                                        : "text-neutral-700 hover:text-neutral-900"
+                                        ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs"
+                                        : "text-neutral-700 hover:text-neutral-900 hover:bg-[--brand-100] rounded-full"
                                 )}
                             >
                                 Contact
                             </Link>
+
+                            {/* Mobile CTAs */}
+                            <div className="mt-4 flex flex-col gap-2">
+                                <Button asChild variant="brand" size="lg" className="rounded-full shadow-md">
+                                    <Link href="/signup" aria-label="Create a TutorLink account" onClick={() => setOpen(false)}>
+                                        Sign up
+                                    </Link>
+                                </Button>
+                                <Button asChild variant="brandOutline" size="lg" className="rounded-full">
+                                    <Link href="/login" aria-label="Log in to TutorLink" onClick={() => setOpen(false)}>
+                                        Log in
+                                    </Link>
+                                </Button>
+                            </div>
                         </div>
                     </SheetContent>
                 </Sheet>
