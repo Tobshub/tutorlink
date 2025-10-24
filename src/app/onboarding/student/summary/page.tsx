@@ -18,7 +18,7 @@ export default function StudentSummary() {
     }, [role, router]);
 
     return (
-        <div className="min-h-screen w-full bg-linear-to-b from-white via-blue-50 to-[#43A8FF]">
+        <div className="min-h-screen w-full bg-gradient-to-b from-white via-blue-50 to-[#43A8FF]">
             <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
                 <Navbar />
 
@@ -48,8 +48,8 @@ export default function StudentSummary() {
                         <Button asChild variant="brandOutline" className="rounded-full px-6">
                             <Link href="/onboarding/student/goals">Back</Link>
                         </Button>
-                        <Button variant="brand" className="rounded-full px-8 py-6 text-black">
-                            Finish
+                        <Button asChild variant="brand" className="rounded-full px-8 py-6 text-black">
+                            <Link href="/dashboard">Finish</Link>
                         </Button>
                     </div>
                 </main>
