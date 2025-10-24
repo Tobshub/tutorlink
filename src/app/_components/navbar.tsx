@@ -36,7 +36,7 @@ export function Navbar() {
                                     className={cn(
                                         "text-sm font-medium",
                                         active === "#home"
-                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs"
+                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs hover:text-black!"
                                             : "text-neutral-700 hover:text-neutral-900"
                                     )}
                                 >
@@ -52,7 +52,7 @@ export function Navbar() {
                                     className={cn(
                                         "text-sm font-medium",
                                         active === "#about"
-                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs"
+                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs hover:text-black!"
                                             : "text-neutral-700 hover:text-neutral-900"
                                     )}
                                 >
@@ -68,7 +68,7 @@ export function Navbar() {
                                     className={cn(
                                         "text-sm font-medium",
                                         active === "#how-it-works"
-                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs"
+                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs hover:text-black!"
                                             : "text-neutral-700 hover:text-neutral-900"
                                     )}
                                 >
@@ -84,7 +84,7 @@ export function Navbar() {
                                     className={cn(
                                         "text-sm font-medium",
                                         active === "#find-tutors"
-                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs"
+                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs hover:text-black!"
                                             : "text-neutral-700 hover:text-neutral-900"
                                     )}
                                 >
@@ -100,7 +100,7 @@ export function Navbar() {
                                     className={cn(
                                         "text-sm font-medium",
                                         active === "#edu-feed"
-                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs"
+                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs hover:text-black!"
                                             : "text-neutral-700 hover:text-neutral-900"
                                     )}
                                 >
@@ -116,7 +116,7 @@ export function Navbar() {
                                     className={cn(
                                         "text-sm font-medium",
                                         active === "#contact"
-                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs"
+                                            ? "text-[#1E88FF] bg-[--brand-100] rounded-full shadow-xs hover:text-black!"
                                             : "text-neutral-700 hover:text-neutral-900"
                                     )}
                                 >
@@ -126,6 +126,16 @@ export function Navbar() {
                         </NavigationMenuItem>
                     </NavigationMenuList>
                 </NavigationMenu>
+            </div>
+
+            {/* Desktop CTAs */}
+            <div className="hidden items-center gap-3 md:flex">
+                <Button asChild variant="brandOutline" size="lg" className="rounded-full">
+                    <Link href="/login" aria-label="Log in to TutorLink">Log in</Link>
+                </Button>
+                <Button asChild variant="brand" size="lg" className="rounded-full shadow-md">
+                    <Link href="/signup" aria-label="Create a TutorLink account" className="hover:text-black/90!">Sign up</Link>
+                </Button>
             </div>
 
             {/* Mobile Nav */}
@@ -238,6 +248,20 @@ export function Navbar() {
                             >
                                 Contact
                             </Link>
+
+                            {/* Mobile CTAs */}
+                            <div className="mt-4 flex flex-col gap-2">
+                                <Button asChild variant="brand" size="lg" className="rounded-full shadow-md">
+                                    <Link href="/signup" aria-label="Create a TutorLink account" onClick={() => setOpen(false)}>
+                                        Sign up
+                                    </Link>
+                                </Button>
+                                <Button asChild variant="brandOutline" size="lg" className="rounded-full">
+                                    <Link href="/login" aria-label="Log in to TutorLink" onClick={() => setOpen(false)}>
+                                        Log in
+                                    </Link>
+                                </Button>
+                            </div>
                         </div>
                     </SheetContent>
                 </Sheet>
