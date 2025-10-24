@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 
 
@@ -10,6 +10,12 @@ class MessageCreate(BaseModel):
     content: Optional[str] = None 
     file_url: Optional[str] = None
     file_type: Optional[str] = None
+    
+    @model_validator(mode='after')
+    def check_content_or_file(self):
+        if not self.content and not self.file_url:
+            raise ValueError('Either content or file_url must be provided')
+        return self
 
 class MessageResponse(BaseModel):
     id: int

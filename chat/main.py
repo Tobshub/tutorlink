@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from typing import Dict, List, Optional
 import json
 import datetime
+from schemas import MessageCreate
 
 # --- Database Setup (SQLAlchemy) ---
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
@@ -19,10 +20,6 @@ from database import Base, get_db, engine, SessionLocal
 
 class MessageBase(BaseModel):
     content: str
-
-
-class MessageCreate(MessageBase):
-    pass
 
 
 class MessageRead(BaseModel):
@@ -53,12 +50,15 @@ async def create_db_and_tables():
 async def create_message(
     db: AsyncSession, sender_username: str, recipient_username: str, content: str
 ) -> MessageORM:
+    if not content or not content.strip():
+        raise ValueError("Message content cannot be empty")
     """Save a new message to the database."""
     new_message = MessageORM(
         sender_username=sender_username,
         recipient_username=recipient_username,
         content=content
     )
+
     db.add(new_message)
     await db.commit()
     await db.refresh(new_message)
@@ -156,7 +156,7 @@ async def read_message_history(
 # --- WebSocket Endpoint ---
 
 @app.websocket("/ws/{username}")
-async def websocket_endpoint(websocket: WebSocket, username: str):
+async def websocket_endpoint(websocket: WebSocket, username: str, db: AsyncSession = Depends(get_db)):
     """
     The main WebSocket endpoint for chat.
     - {username} is the unique username provided by the frontend
@@ -197,18 +197,13 @@ async def websocket_endpoint(websocket: WebSocket, username: str):
                 to_username = data["to_username"]
                 content = data["content"]
 
-                # We no longer check if the recipient exists in our DB.
-                # We just save the message.
-                
-                # We need a DB session within the websocket loop
-                async with SessionLocal() as db:
-                    db_message = await create_message(
-                        db, 
-                        sender_username=username, 
-                        recipient_username=to_username, 
-                        content=content
-                    )
-                
+                db_message = await create_message(
+                    db, 
+                    sender_username=username, 
+                    recipient_username=to_username, 
+                    content=content
+                )
+            
                 # Format the message for sending via WebSocket
                 message_to_send = {
                     "type": "message",

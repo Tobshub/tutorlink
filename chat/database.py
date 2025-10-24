@@ -5,7 +5,7 @@ import os
 
 load_dotenv()
 
-# Prefer APP_DATABASE_URL, fall back to DATABASE_URL
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
