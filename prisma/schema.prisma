@@ -72,7 +72,7 @@ model StudentProfile {
   goals                String[]
   subjectInterests     String[]
   learningStyle        String[]
-  preferredTutorGender String
+  preferredTutorGender String?
 
   studentGrades StudentGrades[]
 
