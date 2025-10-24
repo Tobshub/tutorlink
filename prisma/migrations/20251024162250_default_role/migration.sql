@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+
 -- AlterTable
 ALTER TABLE "StudentProfile" ADD COLUMN     "embedding" vector;
 
