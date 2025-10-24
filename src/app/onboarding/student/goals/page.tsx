@@ -29,7 +29,7 @@ export default function StudentGoals() {
     }, [role, router]);
 
     return (
-        <div className="min-h-screen w-full bg-gradient-to-b from-white via-blue-50 to-[#43A8FF]">
+        <div className="min-h-screen w-full bg-linear-to-b from-white via-blue-50 to-[#43A8FF]">
             <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
                 <Navbar />
 

@@ -16,6 +16,8 @@ export function Chip({ selected, onClick, children, className, disabled }: ChipP
             type="button"
             onClick={onClick}
             disabled={disabled}
+            role="button"
+            aria-pressed={!!selected}
             className={cn(
                 "inline-flex items-center rounded-full border px-3 py-1.5 text-sm transition",
                 selected

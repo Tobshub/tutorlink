@@ -71,7 +71,7 @@ export type OnboardingState = {
     // Tutor actions
     toggleSubjectInterest: (s: SubjectInterest) => void;
     toggleTeachingLevel: (l: TeachingLevel) => void;
-    setYearsOfExperience: (years: number) => void;
+    setYearsOfExperience: (years: number | null) => void;
     toggleTeachingStyle: (s: TeachingStyle) => void;
     toggleSessionType: (t: SessionType) => void;
 
@@ -182,7 +182,7 @@ export const useOnboardingStore = create<OnboardingState>()(
             onRehydrateStorage: () => (state) => {
                 if (!state) return;
                 // Rehydrate arrays back to Sets
-                const hydratedState = state as {
+                const hydratedState = state as unknown as {
                     goals?: LearningGoal[];
                     style?: LearningStyle[];
                     subjectInterests?: SubjectInterest[];

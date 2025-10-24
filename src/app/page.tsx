@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-white via-blue-50 to-[#43A8FF]">
+    <div className="min-h-screen w-full bg-linear-to-b from-white via-blue-50 to-[#43A8FF]">
       <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
         <Navbar />
 
@@ -249,7 +249,7 @@ export default function Home() {
 
         {/* Find Tutors Section */}
         <section id="find-tutors" className="scroll-mt-24 py-16 sm:py-20 lg:py-24">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#1E88FF] via-white to-[#1E88FF]">
+          <div className="relative overflow-hidden rounded-3xl bg-linear-to-b from-[#1E88FF] via-white to-[#1E88FF]">
             <div className="relative mx-auto max-w-4xl px-6 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
               <div className="text-center">
                 <h2 className="mb-8 font-poppins text-3xl font-bold text-neutral-900 sm:text-4xl lg:text-5xl">
@@ -277,7 +277,7 @@ export default function Home() {
 
         {/* EduFeed Section */}
         <section id="edu-feed" className="scroll-mt-24 py-16 sm:py-20 lg:py-24">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#1E88FF] via-white to-[#1E88FF]">
+          <div className="relative overflow-hidden rounded-3xl bg-linear-to-b from-[#1E88FF] via-white to-[#1E88FF]">
             <div className="relative mx-auto max-w-4xl px-6 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
               <div className="text-center">
                 <h2 className="font-poppins text-3xl font-bold text-neutral-900 sm:text-4xl lg:text-5xl">
@@ -295,7 +295,7 @@ export default function Home() {
 
         {/* Contact Section */}
         <section id="contact" className="scroll-mt-24 py-16 sm:py-20 lg:py-24">
-          <div className="rounded-3xl bg-gradient-to-b from-[#1E88FF] to-[#1669D6] px-6 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
+          <div className="rounded-3xl bg-linear-to-b from-[#1E88FF] to-[#1669D6] px-6 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
             <div className="mx-auto max-w-6xl">
               <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                 {/* Contact Us */}
