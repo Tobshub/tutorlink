@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-base-to-string */
 "use client";
 import * as React from "react";
 import Link from "next/link";
