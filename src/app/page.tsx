@@ -71,7 +71,7 @@ export default function Home() {
             {/* CTA Buttons */}
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Button asChild variant="brand" className="rounded-full px-6 py-6 sm:py-3 text-black">
-                <Link href="#find-tutors">Find Tutors</Link>
+                <Link href="/login">Find Tutors</Link>
               </Button>
               <Button
                 asChild
@@ -111,17 +111,7 @@ export default function Home() {
           </Card>
         </section>
 
-        <section id="find-tutors" className="scroll-mt-24 py-16 sm:py-24">
-          <Card className="mx-auto max-w-4xl">
-            <CardContent className="p-6">
-              <div className="mb-3">
-                <SectionPill>FOR STUDENTS</SectionPill>
-              </div>
-              <h2 className="mb-2 text-2xl font-semibold">Find Tutors</h2>
-              <p className="text-neutral-700">Search and discovery section placeholder.</p>
-            </CardContent>
-          </Card>
-        </section>
+        {/* Removed 'Find Tutors' section. That nav item now routes users to the Login/Sign up flow. */}
 
         <section id="edu-feed" className="scroll-mt-24 py-16 sm:py-24">
           <Card className="mx-auto max-w-4xl">
