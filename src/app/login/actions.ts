@@ -1,16 +1,12 @@
 "use server";
 
-// Typed server action placeholders for future wiring.
-// TODO(auth): Implement these with your auth provider (NextAuth, Supabase Auth, custom, etc.).
-'use server'
-
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-import { createClient } from '@/lib/supabase/client';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export async function loginWithEmail(payload: {email: string; password: string}) {
-  const supabase = createClient()
+  const supabase = await createSupabaseServerClient()
 
   const data = {
     email: payload.email,
@@ -28,7 +24,7 @@ export async function loginWithEmail(payload: {email: string; password: string})
 }
 
 export async function signup(formData: FormData) {
-  const supabase = createClient()
+  const supabase = await createSupabaseServerClient()
 
   const data = {
     email: formData.get('email') as string,
