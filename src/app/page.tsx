@@ -1,11 +1,38 @@
 import Link from "next/link";
 import Image from "next/image";
+import { env } from "@/env";
 import { Navbar } from "@/app/_components/navbar";
 import { HeroIllustration } from "@/app/_components/hero-illustration";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
+  type Step = { number: number; label: string; highlight: string };
+  const StepsList = ({ steps }: { steps: Step[] }) => (
+    <div className="space-y-6">
+      {steps.map((s) => (
+        <div key={s.number} className="flex items-start gap-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">{s.number}</div>
+          <div>
+            <span className="font-semibold text-neutral-900">{s.label}</span>
+            <span className="text-[#1E88FF]">{s.highlight}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+  const studentSteps: Step[] = [
+    { number: 1, label: "Create", highlight: " Your Profile" },
+    { number: 2, label: "Get", highlight: " Matched Instantly" },
+    { number: 3, label: "Start", highlight: " a Live Session" },
+    { number: 4, label: "Review", highlight: " with AI Summaries" },
+  ];
+  const tutorSteps: Step[] = [
+    { number: 1, label: "Create", highlight: " Your Profile" },
+    { number: 2, label: "Get", highlight: " Matched Instantly" },
+    { number: 3, label: "Start", highlight: " a Live Session" },
+    { number: 4, label: "Review", highlight: " with AI Summaries" },
+  ];
   return (
     <div className="min-h-screen w-full bg-linear-to-b from-white via-blue-50 to-[#43A8FF]">
       <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
@@ -137,6 +164,8 @@ export default function Home() {
         {/* How It Works Section */}
         <section id="how-it-works" className="scroll-mt-24 py-12 sm:py-16 lg:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            {/* Steps helper defined above */}
+
             {/* For Students */}
             <div className="mb-16 lg:mb-20">
               <div className="mb-8 rounded-2xl bg-[#1E88FF] px-6 py-4 text-center">
@@ -145,36 +174,7 @@ export default function Home() {
 
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
                 {/* Steps */}
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">1</div>
-                    <div>
-                      <span className="font-semibold text-neutral-900">Create</span>
-                      <span className="text-[#1E88FF]"> Your Profile</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">2</div>
-                    <div>
-                      <span className="font-semibold text-neutral-900">Get</span>
-                      <span className="text-[#1E88FF]"> Matched Instantly</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">3</div>
-                    <div>
-                      <span className="font-semibold text-neutral-900">Start</span>
-                      <span className="text-[#1E88FF]"> a Live Session</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">4</div>
-                    <div>
-                      <span className="font-semibold text-neutral-900">Review</span>
-                      <span className="text-[#1E88FF]"> with AI Summaries</span>
-                    </div>
-                  </div>
-                </div>
+                <StepsList steps={studentSteps} />
 
                 {/* Illustration */}
                 <div className="flex justify-center lg:justify-end">
@@ -199,36 +199,7 @@ export default function Home() {
 
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
                 {/* Steps */}
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">1</div>
-                    <div>
-                      <span className="font-semibold text-neutral-900">Create</span>
-                      <span className="text-[#1E88FF]"> Your Profile</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">2</div>
-                    <div>
-                      <span className="font-semibold text-neutral-900">Get</span>
-                      <span className="text-[#1E88FF]"> Matched Instantly</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">3</div>
-                    <div>
-                      <span className="font-semibold text-neutral-900">Start</span>
-                      <span className="text-[#1E88FF]"> a Live Session</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E88FF] text-sm font-bold text-white">4</div>
-                    <div>
-                      <span className="font-semibold text-neutral-900">Review</span>
-                      <span className="text-[#1E88FF]"> with AI Summaries</span>
-                    </div>
-                  </div>
-                </div>
+                <StepsList steps={tutorSteps} />
 
                 {/* Illustration */}
                 <div className="flex justify-center lg:justify-end">
@@ -325,15 +296,13 @@ export default function Home() {
                       <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                       </svg>
-                      <span>+234 **********</span>
-                      {/* TODO: Add actual phone number */}
+                      <span>{env.NEXT_PUBLIC_CONTACT_PHONE_PRIMARY ?? "Unavailable"}</span>
                     </div>
                     <div className="flex items-center justify-center gap-2 text-white md:justify-start">
                       <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                       </svg>
-                      <span>+234 **********</span>
-                      {/* TODO: Add actual phone number */}
+                      <span>{env.NEXT_PUBLIC_CONTACT_PHONE_SECONDARY ?? "Unavailable"}</span>
                     </div>
                   </div>
                 </div>

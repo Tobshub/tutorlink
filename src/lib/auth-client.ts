@@ -9,7 +9,30 @@ export async function authLoginWithEmail({ email, password }: { email: string; p
 
 export async function authLoginWithGoogle(opts?: { redirectTo?: string }) {
     const supabase = createClient();
-    const redirectTo = opts?.redirectTo ?? (typeof window !== "undefined" ? `${window.location.origin}/onboarding` : undefined);
+    // Validate redirectTo to prevent open redirects: allow relative paths or same-origin URLs only
+    let redirectTo: string | undefined = undefined;
+    if (typeof window !== "undefined") {
+        const fallback = `${window.location.origin}/onboarding`;
+        const requested = opts?.redirectTo;
+        if (requested) {
+            if (requested.startsWith("/")) {
+                redirectTo = new URL(requested, window.location.origin).toString();
+            } else {
+                try {
+                    const url = new URL(requested, window.location.origin);
+                    if (url.origin === window.location.origin) {
+                        redirectTo = url.toString();
+                    } else {
+                        redirectTo = fallback;
+                    }
+                } catch {
+                    redirectTo = fallback;
+                }
+            }
+        } else {
+            redirectTo = fallback;
+        }
+    }
     const { data, error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
     if (error) throw error;
     return data;

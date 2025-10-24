@@ -36,7 +36,7 @@ export default function StudentGoals() {
                 <Navbar />
 
                 <main className="mx-auto mt-10 max-w-2xl rounded-2xl bg-white/70 p-6 shadow-sm backdrop-blur sm:mt-14 sm:p-8">
-                    <h2 className="mb-2 font-poppins text-2xl font-semibold text-neutral-800">Goals</h2>
+                    <h1 className="mb-2 font-poppins text-2xl font-semibold text-neutral-800">Goals</h1>
                     <p className="mb-6 text-neutral-600">Set your learning goals — and let TutorLink guide you to success.</p>
 
                     <div className="flex flex-wrap gap-3">
