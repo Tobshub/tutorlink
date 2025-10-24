@@ -2,20 +2,90 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  STUDENT
+  TUTOR
 }
 
 model User {
-    id        String      @id @default(cuid())
-    name      String?
-    email     String?     @unique
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id          String    @id @default(cuid())
+  name        String?
+  email       String?   @unique
+  dateOfBirth DateTime?
 
-    supabaseUid String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  supabaseUid String @unique
+
+  role UserRole @default(STUDENT)
+
+  studentProfile StudentProfile?
+  tutorProfile   TutorProfile?
+}
+
+model TutorProfile {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subjectInterests  String[]
+  teachingLevels    String[]
+  yearsOfExperience Int
+
+  teachingStyle    String
+  tutorCredentials TutorCredentials[]
+
+  embedding Unsupported("vector")?
+}
+
+model TutorCredentials {
+  id        String       @id @default(cuid())
+  profileId String
+  profile   TutorProfile @relation(fields: [profileId], references: [id])
+
+  title       String
+  description String
+
+  documentUrl String?
+}
+
+model StudentProfile {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  goals                String[]
+  subjectInterests     String[]
+  learningStyle        String[]
+  preferredTutorGender String
+
+  studentGrades StudentGrades[]
+
+  embedding Unsupported("vector")?
+}
+
+model StudentGrades {
+  id        String         @id @default(cuid())
+  profileId String
+  profile   StudentProfile @relation(fields: [profileId], references: [id])
+
+  title        String
+  description  String?
+  grade        String
+  yearObtained Int
 }

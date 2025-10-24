@@ -11,15 +11,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-type activeClass = "#home" | "#about" | "#how-it-works" | "#find-tutors" | "#edu-feed" | "#contact";
+type ActiveClass = "#home" | "#about" | "#how-it-works" | "#find-tutors" | "#edu-feed" | "#contact";
 
 export function Navbar() {
     const [open, setOpen] = useState(false);
-    const [active, setActive] = useState<activeClass>("#home");
+    const [active, setActive] = useState<ActiveClass>("#home");
 
     return (
         <nav className="tl-nav flex items-center justify-between rounded-2xl bg-white px-4 py-3 shadow-sm sm:px-6">
-            <Link href="#home" onClick={() => setActive("#home")} className="flex items-center gap-1 text-xl font-bold">
+            <Link href="/" onClick={() => setActive("#home")} className="flex items-center gap-1 text-xl font-bold">
                 <span className="font-geist text-neutral-900">Tutor</span>
                 <span className="font-poppins text-[#1E88FF]">Link</span>
             </Link>
@@ -31,7 +31,7 @@ export function Navbar() {
                         <NavigationMenuItem>
                             <NavigationMenuLink asChild>
                                 <Link
-                                    href="#home"
+                                    href="/"
                                     onClick={() => setActive("#home")}
                                     className={cn(
                                         "text-sm font-medium",
@@ -79,7 +79,7 @@ export function Navbar() {
                         <NavigationMenuItem>
                             <NavigationMenuLink asChild>
                                 <Link
-                                    href="#find-tutors"
+                                    href="/login"
                                     onClick={() => setActive("#find-tutors")}
                                     className={cn(
                                         "text-sm font-medium",
@@ -159,7 +159,7 @@ export function Navbar() {
                     <SheetContent side="right" className="w-64 px-3">
                         <div className="mt-6 flex flex-col gap-1 font-poppins">
                             <Link
-                                href="#home"
+                                href="/"
                                 onClick={() => {
                                     setActive("#home");
                                     setOpen(false);
@@ -204,7 +204,7 @@ export function Navbar() {
                                 How It Works
                             </Link>
                             <Link
-                                href="#find-tutors"
+                                href="/login"
                                 onClick={() => {
                                     setActive("#find-tutors");
                                     setOpen(false);
@@ -266,7 +266,7 @@ export function Navbar() {
                     </SheetContent>
                 </Sheet>
             </div>
-        </nav>
+        </nav >
     );
 }
 
