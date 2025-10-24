@@ -1,4 +1,5 @@
 import { createCallerFactory, createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { onboardingRouter } from "./routers/onboarding";
 
 /**
  * This is the primary router for your server.
@@ -7,6 +8,7 @@ import { createCallerFactory, createTRPCRouter, publicProcedure } from "@/server
  */
 export const appRouter = createTRPCRouter({
   health: publicProcedure.query(() => "OK"),
+  onboarding: onboardingRouter
 });
 
 // export type definition of API
