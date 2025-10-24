@@ -20,7 +20,7 @@ export default function OnboardingIndex() {
 
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <button
-                            className="rounded-2xl border border-neutral-200 bg-white p-6 text-center shadow-sm hover:shadow md:p-8"
+                            className="rounded-2xl border border-neutral-200 bg-white p-6 text-center shadow-sm transition-all duration-200 hover:shadow-lg hover:border-[#1E88FF] hover:bg-blue-50 md:p-8"
                             onClick={() => setRole("student")}
                         >
                             <div className="mx-auto mb-3 h-16 w-16 rounded-full border border-neutral-300 bg-blue-100" />
@@ -28,7 +28,7 @@ export default function OnboardingIndex() {
                         </button>
 
                         <button
-                            className="rounded-2xl border border-neutral-200 bg-white p-6 text-center shadow-sm hover:shadow md:p-8"
+                            className="rounded-2xl border border-neutral-200 bg-white p-6 text-center shadow-sm transition-all duration-200 hover:shadow-lg hover:border-[#1E88FF] hover:bg-blue-50 md:p-8"
                             onClick={() => setRole("tutor")}
                         >
                             <div className="mx-auto mb-3 h-16 w-16 rounded-full border border-neutral-300 bg-blue-100" />
@@ -44,7 +44,7 @@ export default function OnboardingIndex() {
                         )}
                         {role === "tutor" && (
                             <Button asChild variant="brand" className="rounded-full px-8 py-6 text-black">
-                                <Link href="/onboarding/tutor">Next</Link>
+                                <Link href="/onboarding/tutor/subjects">Next</Link>
                             </Button>
                         )}
                     </div>

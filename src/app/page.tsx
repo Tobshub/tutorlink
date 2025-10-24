@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Navbar } from "@/app/_components/navbar";
 import { HeroIllustration } from "@/app/_components/hero-illustration";
 import { Button } from "@/components/ui/button";
@@ -97,9 +98,11 @@ export default function Home() {
                   {/* Left Side - Illustration */}
                   <div className="relative p-6 sm:p-8 lg:p-12">
                     <div className="aspect-square w-full max-w-md mx-auto lg:mx-0">
-                      <img
+                      <Image
                         src="/images/Group 46.png"
                         alt="TutorLink learning platform illustration"
+                        width={400}
+                        height={400}
                         className="h-full w-full object-contain"
                       />
                     </div>
@@ -176,9 +179,11 @@ export default function Home() {
                 {/* Illustration */}
                 <div className="flex justify-center lg:justify-end">
                   <div className="w-full max-w-sm">
-                    <img
+                    <Image
                       src="/images/Group 47.png"
                       alt="Student learning process illustration"
+                      width={300}
+                      height={300}
                       className="h-full w-full object-contain"
                     />
                   </div>
@@ -228,9 +233,11 @@ export default function Home() {
                 {/* Illustration */}
                 <div className="flex justify-center lg:justify-end">
                   <div className="w-full max-w-sm">
-                    <img
+                    <Image
                       src="/images/Group 46.png"
                       alt="Tutor teaching process illustration"
+                      width={300}
+                      height={300}
                       className="h-full w-full object-contain"
                     />
                   </div>
