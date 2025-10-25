@@ -15,7 +15,7 @@ export const tutorRouter = createTRPCRouter({
         }))
         .mutation(async ({ ctx, input }) => {
             const existingProfile = await ctx.db.tutorProfile.findUnique({
-                where: { userId: ctx.user.id },
+                where: { userId: ctx.userId },
             });
 
             if (existingProfile) {
@@ -24,7 +24,7 @@ export const tutorRouter = createTRPCRouter({
 
             const profile = await ctx.db.tutorProfile.create({
                 data: {
-                    userId: ctx.user.id,
+                    userId: ctx.userId,
                     subjectInterests: input.subjectInterests,
                     teachingLevels: input.teachingLevels,
                     yearsOfExperience: input.yearsOfExperience,
@@ -46,7 +46,7 @@ ${input.teachingStyle.join(", ")}
 `);
             const res = await ctx.db.$executeRaw`UPDATE "TutorProfile" SET "embedding" = ${JSON.stringify(embedding)}::vector WHERE "id" = ${profile.id}`
             if (res !== 1) {
-              throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update profile"});
+                throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update profile" });
             }
 
             return { success: true, message: "Tutor profile created successfully", profile };
@@ -55,7 +55,7 @@ ${input.teachingStyle.join(", ")}
     getProfile: protectedProcedure
         .query(async ({ ctx }) => {
             const profile = await ctx.db.tutorProfile.findUnique({
-                where: { userId: ctx.user.id },
+                where: { userId: ctx.userId },
             });
             return profile;
         }),
@@ -70,7 +70,7 @@ ${input.teachingStyle.join(", ")}
         }))
         .mutation(async ({ ctx, input }) => {
             const updatedProfile = await ctx.db.tutorProfile.update({
-                where: { userId: ctx.user.id },
+                where: { userId: ctx.userId },
                 data: {
                     ...input,
                 },
@@ -90,10 +90,29 @@ ${updatedProfile.teachingStyle.map((t) => `- ${t}`).join("\n")}
 `);
             const res = await ctx.db.$executeRaw`UPDATE "TutorProfile" SET "embedding" = ${JSON.stringify(embedding)}::vector WHERE "id" = ${updatedProfile.id}`
             if (res !== 1) {
-              throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update profile"});
+                throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update profile" });
             }
 
             return { success: true, message: "Tutor profile updated successfully", profile: updatedProfile };
+        }),
+
+    listRecent: publicProcedure
+        .input(z.object({ limit: z.number().optional() }).optional())
+        .query(async ({ ctx, input }) => {
+            const take = input?.limit ?? 10;
+            const tutors = await ctx.db.tutorProfile.findMany({
+                take,
+                orderBy: { createdAt: "desc" },
+                include: { user: true },
+            });
+
+            return tutors.map((t) => ({
+                id: t.id,
+                name: t.user?.name ?? t.user?.email ?? "Unknown",
+                subjects: t.subjectInterests,
+                yearsOfExperience: t.yearsOfExperience,
+                teachingStyle: t.teachingStyle,
+            }));
         }),
 
     // Health check

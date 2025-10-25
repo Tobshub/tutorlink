@@ -13,6 +13,7 @@ export const env = createEnv({
       .default("development"),
     BEDROCK_ACCESS_KEY_ID: z.string(),
     BEDROCK_SECRET_ACCESS_KEY: z.string(),
+    CLERK_SECRET_KEY: z.string(),
   },
 
   /**
@@ -21,8 +22,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_SUPABASE_URL: z.string(),
-    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string(),
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
     NEXT_PUBLIC_PEER_HOST: z.string().default("localhost"),
     NEXT_PUBLIC_PEER_PORT: z.number({ coerce: true }).default(9000),
     NEXT_PUBLIC_ICE_SERVER: z.string().optional(),
@@ -43,9 +43,8 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     BEDROCK_ACCESS_KEY_ID: process.env.BEDROCK_ACCESS_KEY_ID,
     BEDROCK_SECRET_ACCESS_KEY: process.env.BEDROCK_SECRET_ACCESS_KEY,
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     NEXT_PUBLIC_PEER_HOST: process.env.NEXT_PUBLIC_PEER_HOST,
     NEXT_PUBLIC_PEER_PORT: process.env.NEXT_PUBLIC_PEER_PORT,
     NEXT_PUBLIC_ICE_SERVER: process.env.NEXT_PUBLIC_ICE_SERVER,
