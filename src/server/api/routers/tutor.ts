@@ -1,7 +1,9 @@
+// TODO: Implement tutor profile creation and updates
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc";
+import { invokeModel } from "@/server/bedrock";
+import { TRPCError } from "@trpc/server";
 
-// TODO: Implement tutor profile creation and updates
 export const tutorRouter = createTRPCRouter({
     createProfile: protectedProcedure
         .input(z.object({
@@ -30,6 +32,23 @@ export const tutorRouter = createTRPCRouter({
                 },
             });
 
+            const { embedding } = await invokeModel(`
+This text describes a tutor profile for an AI tutoring match system.
+
+Subject Interests:
+${input.subjectInterests.map((s) => `- ${s}`).join("\n")}
+
+Teaching Levels:
+${input.teachingLevels.map((l) => `- ${l}`).join("\n")}
+
+Teaching Style:
+${input.teachingStyle.join(", ")}
+`);
+            const res = await ctx.db.$executeRaw`UPDATE "TutorProfile" SET "embedding" = ${JSON.stringify(embedding)}::vector WHERE "id" = ${profile.id}`
+            if (res !== 1) {
+              throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update profile"});
+            }
+
             return { success: true, message: "Tutor profile created successfully", profile };
         }),
 
@@ -56,6 +75,24 @@ export const tutorRouter = createTRPCRouter({
                     ...input,
                 },
             });
+
+            const { embedding } = await invokeModel(`
+This text describes a tutor profile for an AI tutoring match system.
+
+Subject Interests:
+${updatedProfile.subjectInterests.map((s) => `- ${s}`).join("\n")}
+
+Teaching Levels:
+${updatedProfile.teachingLevels.map((l) => `- ${l}`).join("\n")}
+
+Teaching Style:
+${updatedProfile.teachingStyle}
+`);
+            const res = await ctx.db.$executeRaw`UPDATE "TutorProfile" SET "embedding" = ${JSON.stringify(embedding)}::vector WHERE "id" = ${updatedProfile.id}`
+            if (res !== 1) {
+              throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update profile"});
+            }
+
             return { success: true, message: "Tutor profile updated successfully", profile: updatedProfile };
         }),
 
