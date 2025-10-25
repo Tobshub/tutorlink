@@ -58,7 +58,7 @@ async function main() {
       await db.$transaction(async (tx) => {
         const user = await tx.user.create({
           data: {
-            supabaseUid: clerkUser.id, // Using supabaseUid field for Clerk ID
+            clerkUid: clerkUser.id, // Using supabaseUid field for Clerk ID
             name: `${firstName} ${lastName}`,
             email: email,
             role: UserRole.TUTOR,
