@@ -1,5 +1,6 @@
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
-import { z } from 'zod';
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 export const chatRouter = createTRPCRouter({
   getConversations: protectedProcedure.query(async ({ ctx }) => {
@@ -15,7 +16,7 @@ export const chatRouter = createTRPCRouter({
         User: true,
         messages: {
           orderBy: {
-            createdAt: 'desc',
+            createdAt: "desc",
           },
           take: 1,
         },
@@ -32,10 +33,10 @@ export const chatRouter = createTRPCRouter({
         },
         include: {
           sender: true,
-          conversation: { include: { User: true }},
+          conversation: { include: { User: true } },
         },
         orderBy: {
-          createdAt: 'asc',
+          createdAt: "asc",
         },
       });
     }),
@@ -45,14 +46,20 @@ export const chatRouter = createTRPCRouter({
       z.object({
         conversationId: z.string(),
         content: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { clerkUid: ctx.user.id },
+      });
+      if (!user) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
+      }
       return ctx.db.message.create({
         data: {
           conversationId: input.conversationId,
           content: input.content,
-          senderId: ctx.user.id,
+          senderId: user.id,
         },
       });
     }),
