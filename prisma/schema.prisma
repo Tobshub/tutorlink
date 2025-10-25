@@ -34,6 +34,7 @@ model TutorProfile {
   teachingStyle     String[]
   tutorCredentials  TutorCredentials[]
   user              User               @relation(fields: [userId], references: [id])
+  preferredSessionTypes String[]
 }
 
 model TutorCredentials {

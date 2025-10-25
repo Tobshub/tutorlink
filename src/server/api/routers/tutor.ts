@@ -49,6 +49,7 @@ export const tutorRouter = createTRPCRouter({
                         teachingLevels: input.teachingLevels,
                         yearsOfExperience: input.yearsOfExperience,
                         teachingStyle: input.teachingStyle,
+                        preferredSessionTypes: input.preferredSessionTypes,
                     },
                 });
 
