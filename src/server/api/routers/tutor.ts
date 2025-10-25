@@ -59,6 +59,25 @@ export const tutorRouter = createTRPCRouter({
             return { success: true, message: "Tutor profile updated successfully", profile: updatedProfile };
         }),
 
+    listRecent: publicProcedure
+        .input(z.object({ limit: z.number().optional() }).optional())
+        .query(async ({ ctx, input }) => {
+            const take = input?.limit ?? 10;
+            const tutors = await ctx.db.tutorProfile.findMany({
+                take,
+                orderBy: { createdAt: "desc" },
+                include: { user: true },
+            });
+
+            return tutors.map((t) => ({
+                id: t.id,
+                name: t.user?.name ?? t.user?.email ?? "Unknown",
+                subjects: t.subjectInterests,
+                yearsOfExperience: t.yearsOfExperience,
+                teachingStyle: t.teachingStyle,
+            }));
+        }),
+
     // Health check
     health: publicProcedure.query(() => "Tutor router is healthy"),
 });
