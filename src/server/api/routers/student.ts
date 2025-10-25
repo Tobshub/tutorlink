@@ -13,40 +13,60 @@ export const studentRouter = createTRPCRouter({
             subjectsOfInterest: z.array(z.string()),
         }))
         .mutation(async ({ ctx, input }) => {
-            const existingProfile = await ctx.db.studentProfile.findUnique({
-                where: { userId: ctx.user.id },
-            });
+            const clerkUser = ctx.user;
+            const name = `${clerkUser.firstName} ${clerkUser.lastName}`;
+            const email = clerkUser.emailAddresses.find((e) => e.id === clerkUser.primaryEmailAddressId)?.emailAddress;
 
-            if (existingProfile) {
-                return { success: false, message: "Student profile already exists" };
+            if (!email) {
+                throw new TRPCError({ code: "BAD_REQUEST", message: "No primary email address found for user." });
             }
 
-            const profile = await ctx.db.studentProfile.create({
-                data: {
-                    userId: ctx.user.id,
-                    goals: input.goals,
-                    learningStyle: input.learningStyle,
-                    preferredTutorGender: input.preferredTutorGender,
-                    subjectInterests: [],
-                },
+            const profile = await ctx.db.$transaction(async (tx) => {
+                const user = await tx.user.upsert({
+                    where: { clerkUid: clerkUser.id },
+                    update: { name, email },
+                    create: {
+                        clerkUid: clerkUser.id,
+                        name,
+                        email,
+                        role: 'STUDENT',
+                    },
+                });
+
+                const existingProfile = await tx.studentProfile.findUnique({
+                    where: { userId: user.id },
+                });
+
+                if (existingProfile) {
+                    throw new TRPCError({ code: "BAD_REQUEST", message: "Student profile already exists." });
+                }
+
+                const newProfile = await tx.studentProfile.create({
+                    data: {
+                        userId: user.id,
+                        goals: input.goals,
+                        learningStyle: input.learningStyle,
+                        preferredTutorGender: input.preferredTutorGender,
+                        subjectInterests: input.subjectsOfInterest,
+                    },
+                });
+
+                const embeddingText = `
+                    This text describes a student profile for an AI tutoring match system.
+                    Learning Goals:
+                    ${input.goals.map((g) => `- ${g}`).join("\n")}
+                    Subjects of Interest:
+                    ${input.subjectsOfInterest.map((s) => `- ${s}`).join("\n")}
+                    Preferred Learning Styles:
+                    ${input.learningStyle.map((l) => `- ${l}`).join("\n")}
+                `;
+                
+                const { embedding } = await invokeModel(embeddingText);
+                
+                await tx.$executeRaw`UPDATE "StudentProfile" SET "embedding" = ${JSON.stringify(embedding)}::vector WHERE "id" = ${newProfile.id}`;
+
+                return newProfile;
             });
-
-            const { embedding } = await invokeModel(`
-This text describes a student profile for an AI tutoring match system.
-
-Learning Goals:
-${input.goals.map((g) => `- ${g}`).join("\n")}
-
-Subjects of Interest:
-${input.subjectsOfInterest.map((s) => `- ${s}`).join("\n")}
-
-Preferred Learning Styles:
-${input.learningStyle.map((l) => `- ${l}`).join("\n")}
-`);
-            const res = await ctx.db.$executeRaw`UPDATE "StudentProfile" SET "embedding" = ${JSON.stringify(embedding)}::vector WHERE "id" = ${profile.id}`
-            if (res !== 1) {
-                throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update profile" });
-            }
 
             return { success: true, message: "Student profile created successfully", profile };
         }),
