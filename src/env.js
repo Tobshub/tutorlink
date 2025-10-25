@@ -11,6 +11,8 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    BEDROCK_ACCESS_KEY_ID: z.string(),
+    BEDROCK_SECRET_ACCESS_KEY: z.string(),
   },
 
   /**
@@ -37,6 +39,8 @@ export const env = createEnv({
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    BEDROCK_ACCESS_KEY_ID: process.env.BEDROCK_ACCESS_KEY_ID,
+    BEDROCK_SECRET_ACCESS_KEY: process.env.BEDROCK_SECRET_ACCESS_KEY,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
@@ -45,8 +49,10 @@ export const env = createEnv({
     NEXT_PUBLIC_ICE_SERVER: process.env.NEXT_PUBLIC_ICE_SERVER,
     NEXT_PUBLIC_ICE_USER: process.env.NEXT_PUBLIC_ICE_USER,
     NEXT_PUBLIC_ICE_CRED: process.env.NEXT_PUBLIC_ICE_CRED,
-    NEXT_PUBLIC_CONTACT_PHONE_PRIMARY: process.env.NEXT_PUBLIC_CONTACT_PHONE_PRIMARY,
-    NEXT_PUBLIC_CONTACT_PHONE_SECONDARY: process.env.NEXT_PUBLIC_CONTACT_PHONE_SECONDARY,
+    NEXT_PUBLIC_CONTACT_PHONE_PRIMARY:
+      process.env.NEXT_PUBLIC_CONTACT_PHONE_PRIMARY,
+    NEXT_PUBLIC_CONTACT_PHONE_SECONDARY:
+      process.env.NEXT_PUBLIC_CONTACT_PHONE_SECONDARY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
