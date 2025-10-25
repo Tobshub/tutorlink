@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AlertCircle, Send, Zap } from "lucide-react";
 import { api } from "@/trpc/react";
+import { toast } from "sonner";
 
 const subjects = [
     "Mathematics",
@@ -36,8 +37,6 @@ export function SignalForm() {
     const [message, setMessage] = useState("");
     const [urgency, setUrgency] = useState(3);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     const createSignalMutation = api.signal.createSignal.useMutation();
 
@@ -46,7 +45,6 @@ export function SignalForm() {
         if (!selectedSubject || !message.trim()) return;
 
         setIsSubmitting(true);
-        setError(null);
 
         try {
             await createSignalMutation.mutateAsync({
@@ -56,14 +54,13 @@ export function SignalForm() {
                 status: "pending",
             });
 
-            setShowSuccess(true);
+            toast.success("Signal sent! Tutors are being notified...");
             setSelectedSubject("");
             setMessage("");
             setUrgency(3);
-            setTimeout(() => setShowSuccess(false), 4000);
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : "Failed to create signal. Please try again.";
-            setError(errorMessage);
+            toast.error(errorMessage);
             console.error("Error creating signal:", err);
         } finally {
             setIsSubmitting(false);
@@ -72,26 +69,6 @@ export function SignalForm() {
 
     return (
         <div className="w-full max-w-2xl mx-auto">
-            {/* Success Message */}
-            {showSuccess && (
-                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3 animate-in slide-in-from-top-2 duration-300">
-                    <div className="w-2 h-2 rounded-full bg-green-600"></div>
-                    <span className="text-green-900 font-medium">
-                        Signal sent! Tutors are being notified...
-                    </span>
-                </div>
-            )}
-
-            {/* Error Message */}
-            {error && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 animate-in slide-in-from-top-2 duration-300">
-                    <div className="w-2 h-2 rounded-full bg-red-600"></div>
-                    <span className="text-red-900 font-medium">
-                        {error}
-                    </span>
-                </div>
-            )}
-
             <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Subject Selection */}
                 <div>

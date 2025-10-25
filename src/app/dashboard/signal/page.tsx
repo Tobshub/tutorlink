@@ -5,6 +5,7 @@ import { Activity, Clock, Trash2, Zap } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
+import { toast, Toaster } from "sonner";
 
 type SignalData = {
     id: string;
@@ -91,12 +92,17 @@ export default function SignalPage() {
     const { data: mySignals = [], isLoading: isLoadingMy } = api.signal.getMySignals.useQuery(undefined, { enabled: !isTutor });
     const deleteSignal = api.signal.deleteSignal.useMutation({
         onSuccess: async () => {
+            toast.success("Signal cancelled successfully");
             await utils.signal.getMySignals.invalidate();
+        },
+        onError: (error) => {
+            toast.error(error.message || "Failed to cancel signal");
         },
     });
 
     return (
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-0">
+            <Toaster position="top-right" richColors />
             {/* Header */}
             <div className="mb-8">
                 <div className="flex items-center gap-3 mb-2">
