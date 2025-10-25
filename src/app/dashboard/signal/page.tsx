@@ -3,47 +3,17 @@
 import { SignalForm } from "./_components/signal-form";
 import { Activity, Clock, Zap } from "lucide-react";
 import { useState } from "react";
+import { api } from "@/trpc/react";
 
-// Mock active signals for demo
-type Signal = {
+type SignalData = {
     id: string;
-    studentName: string;
+    studentId: string;
     subject: string;
     message: string;
-    urgency: 1 | 2 | 3 | 4 | 5;
-    timeAgo: string;
-    acceptedBy: string | null;
+    urgency: number;
+    status: string;
+    createdAt: Date | string;
 };
-
-const mockActiveSignals: Signal[] = [
-    {
-        id: "1",
-        studentName: "Alex Johnson",
-        subject: "Physics",
-        message: "Help with quantum mechanics problem set",
-        urgency: 4,
-        timeAgo: "2 min",
-        acceptedBy: null,
-    },
-    {
-        id: "2",
-        studentName: "Sarah Williams",
-        subject: "Mathematics",
-        message: "I need help solving complex integration problems",
-        urgency: 3,
-        timeAgo: "5 min",
-        acceptedBy: null,
-    },
-    {
-        id: "3",
-        studentName: "Mike Chen",
-        subject: "Chemistry",
-        message: "WAEC past paper - organic chemistry reactions",
-        urgency: 5,
-        timeAgo: "1 min",
-        acceptedBy: null,
-    },
-];
 
 const urgencyConfig = {
     1: { label: "Low", bg: "bg-blue-100", text: "text-blue-900", badge: "border-blue-300" },
@@ -53,21 +23,26 @@ const urgencyConfig = {
     5: { label: "Critical", bg: "bg-red-200", text: "text-red-950", badge: "border-red-400" },
 };
 
-function SignalCard({ signal }: { signal: (typeof mockActiveSignals)[0] }) {
-    const config = urgencyConfig[signal.urgency];
+function SignalCard({ signal }: { signal: SignalData }) {
+    const config = urgencyConfig[signal.urgency as keyof typeof urgencyConfig];
+    const timeAgo = new Date(signal.createdAt);
+    const now = new Date();
+    const diffMs = now.getTime() - timeAgo.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const displayTime = diffMins < 1 ? "just now" : `${diffMins}m ago`;
 
     return (
         <div className="p-4 border border-neutral-200 rounded-lg hover:shadow-md transition-shadow duration-200 bg-white">
             <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2 flex-1">
                     <div className="w-10 h-10 rounded-full bg-linear-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white font-semibold">
-                        {signal.studentName.charAt(0)}
+                        {signal.studentId.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="font-medium text-neutral-900 text-sm">{signal.studentName}</p>
+                        <p className="font-medium text-neutral-900 text-sm">Student #{signal.studentId.slice(0, 8)}</p>
                         <p className="text-xs text-neutral-500 flex items-center gap-1">
                             <Clock size={12} />
-                            {signal.timeAgo} ago
+                            {displayTime}
                         </p>
                     </div>
                 </div>
@@ -92,6 +67,7 @@ function SignalCard({ signal }: { signal: (typeof mockActiveSignals)[0] }) {
 
 export default function SignalPage() {
     const [tabActive, setTabActive] = useState<"create" | "active">("create");
+    const { data: activeSignals = [], isLoading } = api.signal.getSignals.useQuery();
 
     return (
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-0">
@@ -129,7 +105,7 @@ export default function SignalPage() {
                     <Activity size={18} />
                     Active Signals
                     <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-full">
-                        {mockActiveSignals.length}
+                        {Array.isArray(activeSignals) ? activeSignals.length : 0}
                     </span>
                 </button>
             </div>
@@ -150,13 +126,18 @@ export default function SignalPage() {
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {mockActiveSignals.length > 0 ? (
+                        {isLoading ? (
+                            <div className="text-center py-12">
+                                <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+                                <p className="text-neutral-600">Loading active signals...</p>
+                            </div>
+                        ) : Array.isArray(activeSignals) && activeSignals.length > 0 ? (
                             <>
                                 <p className="text-sm text-neutral-600 mb-4">
-                                    Showing {mockActiveSignals.length} active signals from students
+                                    Showing {activeSignals.length} active signals from students
                                 </p>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {mockActiveSignals.map((signal) => (
+                                    {activeSignals.map((signal: SignalData) => (
                                         <SignalCard key={signal.id} signal={signal} />
                                     ))}
                                 </div>
