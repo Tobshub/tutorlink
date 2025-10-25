@@ -25,7 +25,7 @@ export const signalRouter = createTRPCRouter({
     .input(z.object({ signalId: z.string(), studentId: z.string(), status: z.string()}))
     .mutation(async ({ input, ctx }) => {
       const signal = await ctx.db.signal.findUnique({where:{id: input.signalId }});
-      if (signal?.status=="accepted"){
+      if (input.status=="accepted"){
          await notifyStudent(input.studentId, {
         event: "signal-accepted",
         data: { signalId: input.signalId, tutorId: ctx.user.id },
@@ -48,14 +48,20 @@ export const signalRouter = createTRPCRouter({
     }))
     .mutation(async ({ ctx, input }) => {
          const updatedSignal = await ctx.db.signal.update({
-                where: { id: ctx.user.id },
+                where: { id: input.signalId },
                 data: {
                     ...input,
                 }
             });
             return { success: true, message: "Tutor profile updated successfully", };
         }),
-        
+    getSignals: protectedProcedure
+    .query(async ({ ctx }) => {
+        const signals = await ctx.db.signal.findMany({
+            where: { status: "awaiting" },
+        });
+        return signals;
+    }), 
   health: publicProcedure.query(() => "Signal router is healthy"),
 });
 
