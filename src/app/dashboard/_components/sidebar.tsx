@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Activity, BookOpen, MessageSquare, Phone, Settings } from "lucide-react";
 import { useState } from "react";
+import { api } from "@/trpc/react";
 
 type Item = {
     href: string;
@@ -22,9 +23,17 @@ const items: Item[] = [
 export function Sidebar() {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
+    const { data: role } = api.signal.getViewerRole.useQuery();
+    const isTutor = role === "TUTOR";
+
     const Nav = (
         <nav className="rounded-2xl bg-white/90 p-3 shadow-sm backdrop-blur">
-            <div className="px-3 py-4 text-lg font-semibold text-neutral-900">TutorLink</div>
+            <div className="px-3 py-4">
+                <div className="text-lg font-semibold text-neutral-900">TutorLink</div>
+                <div className="mt-2 inline-block px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-900">
+                    {isTutor ? "🎓 Tutor" : "👤 Student"}
+                </div>
+            </div>
             <ul className="space-y-1">
                 {items.map((i) => {
                     const active = pathname === i.href;
