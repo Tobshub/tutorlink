@@ -126,6 +126,7 @@ export function SignalForm() {
                         placeholder="e.g., I need help solving question 5 WAEC past paper on projectile motion"
                         className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent resize-none placeholder-neutral-400 text-neutral-900"
                         rows={4}
+                        maxLength={500}
                     />
                     <p className="mt-2 text-xs text-neutral-500">
                         {message.length}/500 characters
