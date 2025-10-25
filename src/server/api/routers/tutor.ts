@@ -106,6 +106,32 @@ ${updatedProfile.teachingStyle.map((t) => `- ${t}`).join("\n")}
             return tutors;
         }),
 
+    searchByUsername: publicProcedure
+        .input(z.object({ query: z.string().min(1).max(100) }))
+        .query(async ({ ctx, input }) => {
+            const tutors = await ctx.db.tutorProfile.findMany({
+                where: {
+                    user: {
+                        name: {
+                            contains: input.query,
+                            mode: "insensitive",
+                        },
+                    },
+                },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                        },
+                    },
+                },
+                take: 20,
+            });
+            return tutors;
+        }),
+
     // Health check
     health: publicProcedure.query(() => "Tutor router is healthy"),
 });

@@ -1,6 +1,7 @@
 import "server-only";
 import { api } from "@/trpc/server";
 import { TutorCard } from "./_components/tutor-card";
+import { TutorSearch } from "./_components/tutor-search";
 
 //TODO: Add loading states + suspense boundaries for better UX
 
@@ -14,6 +15,11 @@ export default async function DashboardHome() {
                 <h1 className="font-poppins text-2xl font-semibold text-neutral-900">Welcome back{name ? ` ${name}` : ""}!</h1>
                 <p className="text-neutral-600">Jump back into learning</p>
             </header>
+
+            {/* Tutor Search */}
+            <section>
+                <TutorSearch />
+            </section>
 
             <section>
                 <h2 className="mb-3 text-xl font-semibold text-neutral-900">Recent Tutors</h2>
