@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useOnboardingStore } from "@/stores/onboarding";
+import { api } from "@/trpc/react";
+import { toast } from "sonner";
 
 export default function TutorSummary() {
     const role = useOnboardingStore((s) => s.role);
@@ -13,12 +15,34 @@ export default function TutorSummary() {
     const yearsOfExperience = useOnboardingStore((s) => s.yearsOfExperience);
     const teachingStyle = Array.from(useOnboardingStore((s) => s.teachingStyle));
     const preferredSessionTypes = Array.from(useOnboardingStore((s) => s.preferredSessionTypes));
+    const reset = useOnboardingStore((s) => s.reset);
     const router = useRouter();
+
+    const { mutate: createProfile, isPending } = api.tutor.createProfile.useMutation({
+        onSuccess: () => {
+            toast.success("Profile created successfully!");
+            reset();
+            router.push("/dashboard");
+        },
+        onError: (error) => {
+            toast.error(error.message);
+        },
+    });
 
     useEffect(() => {
         if (!hydrated) return;
         if (role !== "tutor") router.replace("/onboarding");
     }, [hydrated, role, router]);
+
+    const handleFinish = () => {
+        createProfile({
+            subjectInterests,
+            teachingLevels,
+            yearsOfExperience: yearsOfExperience ?? 0,
+            teachingStyle,
+            preferredSessionTypes,
+        });
+    };
 
     return (
         <div className="min-h-screen w-full bg-linear-to-b from-white via-blue-50 to-[#43A8FF]">
@@ -58,8 +82,13 @@ export default function TutorSummary() {
                         <Button asChild variant="brandOutline" className="rounded-full px-6">
                             <Link href="/onboarding/tutor/subjects">Back</Link>
                         </Button>
-                        <Button variant="brand" className="rounded-full px-8 py-6 text-black" onClick={() => router.push("/dashboard")}>
-                            Finish
+                        <Button
+                            variant="brand"
+                            className="rounded-full px-8 py-6 text-black"
+                            onClick={handleFinish}
+                            disabled={isPending}
+                        >
+                            {isPending ? "Finishing..." : "Finish"}
                         </Button>
                     </div>
                 </main>

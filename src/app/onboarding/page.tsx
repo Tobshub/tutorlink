@@ -1,11 +1,18 @@
 "use client";
 import Link from "next/link";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useOnboardingStore } from "@/stores/onboarding";
 
 export default function OnboardingIndex() {
     const role = useOnboardingStore((s) => s.role);
     const setRole = useOnboardingStore((s) => s.setRole);
+    const reset = useOnboardingStore((s) => s.reset);
+
+    // Clear any previous onboarding data when starting fresh
+    useEffect(() => {
+        reset();
+    }, [reset]);
 
     return (
         <div className="min-h-screen w-full bg-linear-to-b from-white via-blue-50 to-[#43A8FF]">
