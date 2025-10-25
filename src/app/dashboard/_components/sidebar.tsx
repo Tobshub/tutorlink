@@ -15,7 +15,7 @@ const items: Item[] = [
     { href: "/dashboard/signal", label: "Signal", icon: <Activity size={18} /> },
     { href: "/dashboard/lessons", label: "Lessons", icon: <BookOpen size={18} /> },
     { href: "/dashboard/messages", label: "Messages", icon: <MessageSquare size={18} /> },
-    { href: "/dashboard/calls", label: "Calls", icon: <Phone size={18} /> },
+    { href: "/dashboard/calls", label: "Live Sessions", icon: <Phone size={18} /> },
     { href: "/dashboard/settings", label: "Settings", icon: <Settings size={18} /> },
 ];
 
