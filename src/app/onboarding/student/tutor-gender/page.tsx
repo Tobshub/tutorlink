@@ -38,7 +38,7 @@ export default function StudentTutorGender() {
 
                     <div className="mt-8 text-center">
                         <Button asChild variant="brand" className="rounded-full px-8 py-6 text-black">
-                            <Link href="/onboarding/student/summary">Next</Link>
+                            <Link href="/onboarding/student/subjects">Next</Link>
                         </Button>
                     </div>
                 </main>
