@@ -1,15 +1,24 @@
 "use client";
 import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useOnboardingStore } from "@/stores/onboarding";
 
 export default function TutorSummary() {
     const role = useOnboardingStore((s) => s.role);
+    const hydrated = useOnboardingStore((s) => s.hydrated);
     const subjectInterests = Array.from(useOnboardingStore((s) => s.subjectInterests));
     const teachingLevels = Array.from(useOnboardingStore((s) => s.teachingLevels));
     const yearsOfExperience = useOnboardingStore((s) => s.yearsOfExperience);
     const teachingStyle = Array.from(useOnboardingStore((s) => s.teachingStyle));
     const preferredSessionTypes = Array.from(useOnboardingStore((s) => s.preferredSessionTypes));
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!hydrated) return;
+        if (role !== "tutor") router.replace("/onboarding");
+    }, [hydrated, role, router]);
 
     return (
         <div className="min-h-screen w-full bg-linear-to-b from-white via-blue-50 to-[#43A8FF]">
@@ -49,7 +58,7 @@ export default function TutorSummary() {
                         <Button asChild variant="brandOutline" className="rounded-full px-6">
                             <Link href="/onboarding/tutor/subjects">Back</Link>
                         </Button>
-                        <Button variant="brand" className="rounded-full px-8 py-6 text-black">
+                        <Button variant="brand" className="rounded-full px-8 py-6 text-black" onClick={() => router.push("/dashboard")}>
                             Finish
                         </Button>
                     </div>
