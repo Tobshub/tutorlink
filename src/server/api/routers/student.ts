@@ -159,8 +159,6 @@ ${updatedProfile.learningStyle.map((l) => `- ${l}`).join("\n")}
       where: { user: { clerkUid: ctx.user.id } },
     });
 
-    console.log(ctx.user.id, studentProfile);
-
     if (!studentProfile) {
       throw new TRPCError({
         code: "NOT_FOUND",
@@ -169,7 +167,7 @@ ${updatedProfile.learningStyle.map((l) => `- ${l}`).join("\n")}
     }
 
     const tutors = await ctx.db.$queryRaw<
-      { id: string; name: string; email: string; similarity: number }[]
+      { id: string; userId: string; name: string; email: string; similarity: number }[]
     >`
                 SELECT "TutorProfile".*, "User"."name", "User"."email", 1 - ("TutorProfile"."embedding"::vector <=> (SELECT "embedding"::vector FROM "StudentProfile" WHERE "id" = ${studentProfile.id})) as similarity
                 FROM "TutorProfile"

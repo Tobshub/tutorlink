@@ -88,7 +88,7 @@ export const chatRouter = createTRPCRouter({
       const newConversation = await ctx.db.conversation.create({
         data: {
           User: {
-            connect: [{ id: ctx.user.id }, { id: input.tutorId }],
+            connect: [{ clerkUid: ctx.user.id }, { id: input.tutorId }],
           },
         },
       });
