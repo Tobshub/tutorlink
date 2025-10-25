@@ -1,7 +1,11 @@
 import "server-only";
+import { auth } from "@clerk/nextjs/server";
 import { api } from "@/trpc/server";
 
 export default async function EditProfilePage() {
+    const { isAuthenticated, redirectToSignIn } = await auth();
+    if (!isAuthenticated) return redirectToSignIn();
+
     // Fetch existing profiles (either student or tutor) for prefill (future work)
     const [student, tutor] = await Promise.all([
         api.student.getProfile(),

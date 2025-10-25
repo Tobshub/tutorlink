@@ -1,25 +1,7 @@
-/* eslint-disable @typescript-eslint/no-base-to-string */
 "use client";
 import * as React from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
-import z from "zod";
-import { authLoginWithEmail, authLoginWithGoogle } from "@/lib/auth-client";
-
-
-const loginSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(8).max(100)
-})
-
-type LoginInfo = z.infer<typeof loginSchema>
-
-export type LoginFormProps = {
-    onEmailPasswordSubmit?: (payload: LoginInfo) => Promise<void> | void;
-    onGoogleLogin?: () => Promise<void> | void;
-};
+import { SignInButton } from "@clerk/nextjs";
 
 function LogoMark(props: React.SVGProps<SVGSVGElement>) {
     return (
@@ -44,54 +26,7 @@ function LogoMark(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
-export function LoginForm({ onEmailPasswordSubmit, onGoogleLogin }: LoginFormProps) {
-    const [pending, setPending] = React.useState(false);
-    const router = useRouter();
-
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-        setPending(true)
-        e.preventDefault();
-        const form = e.currentTarget;
-        const formData = new FormData(form);
-        const email = String(formData.get("email") ?? "").trim();
-        const password = String(formData.get("password") ?? "");
-
-        const result = loginSchema.safeParse({ email, password });
-        if (!result.success) {
-            //TODO: Add a toast notification here
-            console.error("[login] validation failed", result.error);
-            setPending(false)
-            return;
-        }
-
-        try {
-            if (onEmailPasswordSubmit) {
-                await onEmailPasswordSubmit({ email, password });
-            } else {
-                await authLoginWithEmail({ email, password });
-            }
-            router.replace("/onboarding");
-        } catch (err) {
-            console.error("[login] auth error", err);
-        } finally {
-            setPending(false);
-        }
-
-    }
-
-    const handleGoogle = async () => {
-        try {
-            if (onGoogleLogin) await onGoogleLogin();
-            else {
-                const origin = typeof window !== 'undefined' ? window.location.origin : undefined;
-                const redirectTo = origin ? `${origin}/onboarding` : undefined;
-                await authLoginWithGoogle({ redirectTo });
-            }
-        } catch (err) {
-            console.error("[login] google error", err);
-        }
-    };
-
+export function LoginForm() {
     return (
         <>
             <div className="flex flex-col items-center text-center">
@@ -103,37 +38,18 @@ export function LoginForm({ onEmailPasswordSubmit, onGoogleLogin }: LoginFormPro
                 </h1>
             </div>
 
-            <form className="mt-6 space-y-4" method="post" onSubmit={handleSubmit}>
-                <Input type="email" name="email" placeholder="Email" autoComplete="email" required disabled={pending} />
-                <Input type="password" name="password" placeholder="Password" autoComplete="current-password" required disabled={pending} />
-
-                <Button type="submit" variant="brand" size="lg" className="mt-2 w-full rounded-full shadow-md text-black" disabled={pending}>
-                    Log in
-                </Button>
-
-                <div className="relative py-2 text-center text-sm text-neutral-500">
-                    <span className="bg-white/70 px-2">or</span>
-                    <div className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-neutral-200" />
-                </div>
-
-                {/* Keep Link for identical DOM/styling; attach onClick for Google flow */}
-                <Button asChild variant="brandOutline" size="lg" className="w-full rounded-full" disabled={pending}>
-                    <Link href="#" aria-label="Continue with Google" onClick={(e) => { e.preventDefault(); void handleGoogle(); }}>
-                        <span className="mr-2 inline-flex h-5 w-5 items-center justify-center">
-                            {/* Google G icon */}
-                            <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
-                                <path d="M21.35 11.1H12v2.8h5.3c-.23 1.48-1.66 4.34-5.3 4.34a5.8 5.8 0 1 1 0-11.6 5.1 5.1 0 0 1 3.6 1.4l1.9-1.9A8.31 8.31 0 0 0 12 3.5 8.5 8.5 0 1 0 20.5 12c0-.6-.05-1-.15-1.4Z" fill="#4285F4" />
-                            </svg>
-                        </span>
-                        Continue with Google
-                    </Link>
-                </Button>
+            <div className="mt-6 space-y-4">
+                <SignInButton mode="modal" forceRedirectUrl="/onboarding">
+                    <button className="w-full rounded-full bg-[#1E88FF] px-4 py-3 font-semibold text-white shadow-md transition-colors hover:bg-[#1565C0]">
+                        Log in
+                    </button>
+                </SignInButton>
 
                 <p className="text-center text-sm text-neutral-700">
                     Don&apos;t have an account?{' '}
                     <Link href="/signup" className="font-medium text-[#1E88FF] underline-offset-4 hover:underline">Sign up</Link>
                 </p>
-            </form>
+            </div>
         </>
     );
 }

@@ -15,7 +15,7 @@ export const tutorRouter = createTRPCRouter({
         }))
         .mutation(async ({ ctx, input }) => {
             const existingProfile = await ctx.db.tutorProfile.findUnique({
-                where: { userId: ctx.userId },
+                where: { userId: ctx.user.id },
             });
 
             if (existingProfile) {
@@ -24,7 +24,7 @@ export const tutorRouter = createTRPCRouter({
 
             const profile = await ctx.db.tutorProfile.create({
                 data: {
-                    userId: ctx.userId,
+                    userId: ctx.user.id,
                     subjectInterests: input.subjectInterests,
                     teachingLevels: input.teachingLevels,
                     yearsOfExperience: input.yearsOfExperience,
@@ -55,7 +55,7 @@ ${input.teachingStyle.join(", ")}
     getProfile: protectedProcedure
         .query(async ({ ctx }) => {
             const profile = await ctx.db.tutorProfile.findUnique({
-                where: { userId: ctx.userId },
+                where: { userId: ctx.user.id },
             });
             return profile;
         }),
@@ -70,7 +70,7 @@ ${input.teachingStyle.join(", ")}
         }))
         .mutation(async ({ ctx, input }) => {
             const updatedProfile = await ctx.db.tutorProfile.update({
-                where: { userId: ctx.userId },
+                where: { userId: ctx.user.id },
                 data: {
                     ...input,
                 },
@@ -97,22 +97,39 @@ ${updatedProfile.teachingStyle.map((t) => `- ${t}`).join("\n")}
         }),
 
     listRecent: publicProcedure
-        .input(z.object({ limit: z.number().optional() }).optional())
+        .input(z.object({ limit: z.number().default(10) }))
         .query(async ({ ctx, input }) => {
-            const take = input?.limit ?? 10;
             const tutors = await ctx.db.tutorProfile.findMany({
-                take,
+                take: input.limit,
                 orderBy: { createdAt: "desc" },
-                include: { user: true },
             });
+            return tutors;
+        }),
 
-            return tutors.map((t) => ({
-                id: t.id,
-                name: t.user?.name ?? t.user?.email ?? "Unknown",
-                subjects: t.subjectInterests,
-                yearsOfExperience: t.yearsOfExperience,
-                teachingStyle: t.teachingStyle,
-            }));
+    searchByUsername: publicProcedure
+        .input(z.object({ query: z.string().min(1).max(100) }))
+        .query(async ({ ctx, input }) => {
+            const tutors = await ctx.db.tutorProfile.findMany({
+                where: {
+                    user: {
+                        name: {
+                            contains: input.query,
+                            mode: "insensitive",
+                        },
+                    },
+                },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                        },
+                    },
+                },
+                take: 20,
+            });
+            return tutors;
         }),
 
     // Health check
