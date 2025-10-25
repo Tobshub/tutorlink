@@ -97,22 +97,13 @@ ${updatedProfile.teachingStyle.map((t) => `- ${t}`).join("\n")}
         }),
 
     listRecent: publicProcedure
-        .input(z.object({ limit: z.number().optional() }).optional())
+        .input(z.object({ limit: z.number().default(10) }))
         .query(async ({ ctx, input }) => {
-            const take = input?.limit ?? 10;
             const tutors = await ctx.db.tutorProfile.findMany({
-                take,
+                take: input.limit,
                 orderBy: { createdAt: "desc" },
-                include: { user: true },
             });
-
-            return tutors.map((t) => ({
-                id: t.id,
-                name: t.user?.name ?? t.user?.email ?? "Unknown",
-                subjects: t.subjectInterests,
-                yearsOfExperience: t.yearsOfExperience,
-                teachingStyle: t.teachingStyle,
-            }));
+            return tutors;
         }),
 
     // Health check

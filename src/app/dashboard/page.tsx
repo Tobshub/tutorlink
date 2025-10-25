@@ -23,11 +23,11 @@ export default async function DashboardHome() {
                     if (!tutors.length) return <div className="text-sm text-neutral-500">No tutors yet.</div>;
                     return (
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            {tutors.map((t) => (
+                            {tutors.map((t: typeof tutors[0]) => (
                                 <TutorCard
                                     key={t.id}
-                                    name={t.name}
-                                    subjects={t.subjects}
+                                    name="Tutor"
+                                    subjects={t.subjectInterests}
                                     yearsOfExperience={t.yearsOfExperience}
                                 />
                             ))}
