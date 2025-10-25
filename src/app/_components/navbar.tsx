@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import {
     NavigationMenu,
@@ -130,12 +131,16 @@ export function Navbar() {
 
             {/* Desktop CTAs */}
             <div className="hidden items-center gap-3 md:flex">
-                <Button asChild variant="brandOutline" size="lg" className="rounded-full">
-                    <Link href="/login" aria-label="Log in to TutorLink">Log in</Link>
-                </Button>
-                <Button asChild variant="brand" size="lg" className="rounded-full shadow-md">
-                    <Link href="/signup" aria-label="Create a TutorLink account" className="hover:text-black/90!">Sign up</Link>
-                </Button>
+                <SignInButton>
+                    <Button variant="brandOutline" size="lg" className="rounded-full">
+                        Log in
+                    </Button>
+                </SignInButton>
+                <SignUpButton>
+                    <Button variant="brand" size="lg" className="rounded-full shadow-md hover:text-black/90!">
+                        Sign up
+                    </Button>
+                </SignUpButton>
             </div>
 
             {/* Mobile Nav */}
@@ -251,16 +256,16 @@ export function Navbar() {
 
                             {/* Mobile CTAs */}
                             <div className="mt-4 flex flex-col gap-2">
-                                <Button asChild variant="brand" size="lg" className="rounded-full shadow-md">
-                                    <Link href="/signup" aria-label="Create a TutorLink account" onClick={() => setOpen(false)}>
+                                <SignUpButton>
+                                    <Button variant="brand" size="lg" className="rounded-full shadow-md" onClick={() => setOpen(false)}>
                                         Sign up
-                                    </Link>
-                                </Button>
-                                <Button asChild variant="brandOutline" size="lg" className="rounded-full">
-                                    <Link href="/login" aria-label="Log in to TutorLink" onClick={() => setOpen(false)}>
+                                    </Button>
+                                </SignUpButton>
+                                <SignInButton>
+                                    <Button variant="brandOutline" size="lg" className="rounded-full" onClick={() => setOpen(false)}>
                                         Log in
-                                    </Link>
-                                </Button>
+                                    </Button>
+                                </SignInButton>
                             </div>
                         </div>
                     </SheetContent>
