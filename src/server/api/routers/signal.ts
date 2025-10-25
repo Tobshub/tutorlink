@@ -56,7 +56,13 @@ export const signalRouter = createTRPCRouter({
             });
             return { success: true, message: "Tutor profile updated successfully", };
         }),
-        
+    getSignals: protectedProcedure
+    .query(async ({ ctx }) => {
+        const signals = await ctx.db.signal.findMany({
+            where: { status: "awaiting" },
+        });
+        return signals;
+    }), 
   health: publicProcedure.query(() => "Signal router is healthy"),
 });
 
