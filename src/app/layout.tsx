@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import { type Metadata } from "next";
 import { Inter, Poppins, Roboto_Mono, Geist } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "sonner";
 
 import { TRPCReactProvider } from "@/trpc/react";
 
@@ -27,7 +28,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${inter.variable} ${poppins.variable} ${geist.variable} ${robotoMono.variable}`}>
         <body className="font-sans antialiased">
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            {children}
+            <Toaster />
+          </TRPCReactProvider>
         </body>
       </html>
     </ClerkProvider>
