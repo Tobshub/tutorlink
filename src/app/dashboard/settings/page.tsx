@@ -6,15 +6,33 @@ import { api } from "@/trpc/react";
 import { Zap } from "lucide-react";
 
 export default function SettingsPage() {
-    const { data: role } = api.signal.getViewerRole.useQuery();
-    const isTutor = role === "TUTOR";
+    const { data, isLoading, isError, error } = api.signal.getViewerRole.useQuery();
+    const isTutor = !!data && data === "TUTOR";
 
     return (
         <div className="flex flex-col gap-6">
             <h1 className="text-xl font-semibold text-neutral-900">Settings</h1>
 
-            {/* Tutor-specific section */}
-            {isTutor && (
+            {/* Loading skeleton for Signals section */}
+            {isLoading && (
+                <div className="pt-4 border-t border-neutral-200">
+                    <h2 className="text-lg font-medium text-neutral-900 mb-4">Signals</h2>
+                    <div className="h-10 bg-neutral-200 rounded-lg animate-pulse w-48"></div>
+                </div>
+            )}
+
+            {/* Error state */}
+            {isError && (
+                <div className="pt-4 border-t border-neutral-200">
+                    <h2 className="text-lg font-medium text-neutral-900 mb-2">Signals</h2>
+                    <p className="text-sm text-red-600">
+                        {error?.message || "Failed to load user role"}
+                    </p>
+                </div>
+            )}
+
+            {/* Tutor-specific section - only show when loaded successfully and is tutor */}
+            {!isLoading && !isError && isTutor && (
                 <div className="pt-4 border-t border-neutral-200">
                     <h2 className="text-lg font-medium text-neutral-900 mb-4">Signals</h2>
                     <Link href="/dashboard/signal">

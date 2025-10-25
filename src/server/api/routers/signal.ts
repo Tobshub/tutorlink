@@ -8,14 +8,14 @@ import { broadcastToTutors, notifyStudent } from "@/server/wsBridge";
 export const signalRouter = createTRPCRouter({
     // Returns the current viewer's role for conditional UI rendering
     getViewerRole: protectedProcedure.query(async ({ ctx }) => {
-        // Check if user has a tutor profile in DB
-        const tutorProfile = await ctx.db.tutorProfile.findUnique({
-            where: { userId: ctx.user.id },
-            select: { id: true },
+        // Query the DB user to get the canonical role
+        const user = await ctx.db.user.findUnique({
+            where: { clerkUid: ctx.user.id },
+            select: { role: true },
         });
 
-        // If they have a tutor profile, they're a tutor; otherwise student
-        return tutorProfile ? "TUTOR" : "STUDENT";
+        // Return the user's role from DB or default to STUDENT if not found
+        return user?.role ?? "STUDENT";
     }),
 
     createSignal: protectedProcedure
@@ -109,9 +109,9 @@ export const signalRouter = createTRPCRouter({
     acceptSignal: protectedProcedure
         .input(z.object({ signalId: z.string() }))
         .mutation(async ({ ctx, input }) => {
-            // Guard: Only tutors can accept signals - check DB role
+            // Guard: Only tutors can accept signals - query by Clerk ID for consistency
             const me = await ctx.db.user.findUnique({
-                where: { id: ctx.user.id },
+                where: { clerkUid: ctx.user.id },
                 select: { id: true, role: true },
             });
             if (me?.role !== "TUTOR") {
