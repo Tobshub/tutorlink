@@ -11,6 +11,9 @@ export const peerBuildConnection = (id?: string): Peer => {
       ? {
         iceServers: [
           {
+            urls: env.NEXT_PUBLIC_STUN_SERVER,
+          },
+          {
             urls: env.NEXT_PUBLIC_ICE_SERVER,
             username: env.NEXT_PUBLIC_ICE_USER,
             credential: env.NEXT_PUBLIC_ICE_CRED,
@@ -27,7 +30,7 @@ export const peerBuildConnection = (id?: string): Peer => {
   }
 };
 
-export const useVideoStream = (callback: (stream: MediaStream) => void | Promise<void>): void => {
+export const startVideoStream = (callback: (stream: MediaStream) => void | Promise<void>): void => {
   navigator.mediaDevices
     .getUserMedia({ video: { aspectRatio: 16 / 9 }, audio: true })
     .then(callback)
@@ -52,4 +55,12 @@ export const terminatePeerCall = (call: MediaConnection): void => {
   } catch (error) {
     console.error("Error terminating peer call:", error);
   }
+};
+
+export const toggleAudio = (stream: MediaStream, status: boolean) => {
+  stream.getAudioTracks().forEach((track) => (track.enabled = status));
+};
+
+export const toggleVideo = (stream: MediaStream, status: boolean) => {
+  stream.getVideoTracks().forEach((track) => (track.enabled = status));
 };
