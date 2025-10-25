@@ -23,17 +23,17 @@ model User {
 }
 
 model TutorProfile {
-  id                String                 @id @default(cuid())
-  userId            String                 @unique
-  createdAt         DateTime               @default(now())
-  updatedAt         DateTime               @updatedAt
+  id                String             @id @default(cuid())
+  userId            String             @unique
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
   subjectInterests  String[]
   teachingLevels    String[]
   yearsOfExperience Int
-  embedding         Unsupported("vector")?
+  embedding         Float[]
   teachingStyle     String[]
   tutorCredentials  TutorCredentials[]
-  user              User                   @relation(fields: [userId], references: [id])
+  user              User               @relation(fields: [userId], references: [id])
 }
 
 model TutorCredentials {
@@ -46,17 +46,17 @@ model TutorCredentials {
 }
 
 model StudentProfile {
-  id                   String                 @id @default(cuid())
-  userId               String                 @unique
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
+  id                   String          @id @default(cuid())
+  userId               String          @unique
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
   goals                String[]
   subjectInterests     String[]
   learningStyle        String[]
   preferredTutorGender String?
-  embedding            Unsupported("vector")?
+  embedding            Float[]
   studentGrades        StudentGrades[]
-  user                 User                   @relation(fields: [userId], references: [id])
+  user                 User            @relation(fields: [userId], references: [id])
 }
 
 model StudentGrades {

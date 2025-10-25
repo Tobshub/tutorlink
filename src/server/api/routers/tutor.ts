@@ -64,7 +64,7 @@ export const tutorRouter = createTRPCRouter({
 
                 const { embedding } = await invokeModel(embeddingText);
 
-                await tx.$executeRaw`UPDATE "TutorProfile" SET "embedding" = ${JSON.stringify(embedding)}::vector WHERE "id" = ${newProfile.id}`;
+                await ctx.db.tutorProfile.update({ where: { id: newProfile.id }, data: { embedding }});
 
                 return newProfile;
             });
@@ -74,8 +74,14 @@ export const tutorRouter = createTRPCRouter({
 
     getProfile: protectedProcedure
         .query(async ({ ctx }) => {
+            const user = await ctx.db.user.findUnique({
+                where: { clerkUid: ctx.user.id },
+            });
+            if (!user) {
+                throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
+            }
             const profile = await ctx.db.tutorProfile.findUnique({
-                where: { userId: ctx.user.id },
+                where: { userId: user.id },
             });
             return profile;
         }),
@@ -89,8 +95,15 @@ export const tutorRouter = createTRPCRouter({
             preferredSessionTypes: z.array(z.string()).optional(),
         }))
         .mutation(async ({ ctx, input }) => {
+            const user = await ctx.db.user.findUnique({
+                where: { clerkUid: ctx.user.id },
+            });
+            if (!user) {
+                throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
+            }
+
             const updatedProfile = await ctx.db.tutorProfile.update({
-                where: { userId: ctx.user.id },
+                where: { userId: user.id },
                 data: {
                     ...input,
                 },
@@ -108,10 +121,7 @@ ${updatedProfile.teachingLevels.map((l) => `- ${l}`).join("\n")}
 Teaching Style:
 ${updatedProfile.teachingStyle.map((t) => `- ${t}`).join("\n")}
 `);
-            const res = await ctx.db.$executeRaw`UPDATE "TutorProfile" SET "embedding" = ${JSON.stringify(embedding)}::vector WHERE "id" = ${updatedProfile.id}`
-            if (res !== 1) {
-                throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update profile" });
-            }
+            await ctx.db.tutorProfile.update({ where: { id: updatedProfile.id}, data: { embedding}});
 
             return { success: true, message: "Tutor profile updated successfully", profile: updatedProfile };
         }),
