@@ -2,6 +2,7 @@ import { createCallerFactory, createTRPCRouter, publicProcedure } from "@/server
 import { tutorRouter } from "@/server/api/routers/tutor";
 import { studentRouter } from "@/server/api/routers/student";
 import { chatRouter } from './routers/chat';
+import { signalRouter } from "@/server/api/routers/signal";
 
 /**
  * This is the primary router for your server.
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   tutor: tutorRouter,
   student: studentRouter,
   chat: chatRouter,
+  signal: signalRouter,
 });
 
 // export type definition of API

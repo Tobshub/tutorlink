@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AlertCircle, Send, Zap } from "lucide-react";
+import { api } from "@/trpc/react";
 
 const subjects = [
     "Mathematics",
@@ -36,21 +37,37 @@ export function SignalForm() {
     const [urgency, setUrgency] = useState(3);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const createSignalMutation = api.signal.createSignal.useMutation();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedSubject || !message.trim()) return;
 
         setIsSubmitting(true);
-        // Simulate API call
-        setTimeout(() => {
-            setIsSubmitting(false);
+        setError(null);
+
+        try {
+            await createSignalMutation.mutateAsync({
+                message,
+                subject: selectedSubject,
+                urgency,
+                status: "pending",
+            });
+
             setShowSuccess(true);
             setSelectedSubject("");
             setMessage("");
             setUrgency(3);
             setTimeout(() => setShowSuccess(false), 4000);
-        }, 600);
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : "Failed to create signal. Please try again.";
+            setError(errorMessage);
+            console.error("Error creating signal:", err);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -61,6 +78,16 @@ export function SignalForm() {
                     <div className="w-2 h-2 rounded-full bg-green-600"></div>
                     <span className="text-green-900 font-medium">
                         Signal sent! Tutors are being notified...
+                    </span>
+                </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 animate-in slide-in-from-top-2 duration-300">
+                    <div className="w-2 h-2 rounded-full bg-red-600"></div>
+                    <span className="text-red-900 font-medium">
+                        {error}
                     </span>
                 </div>
             )}
@@ -78,8 +105,8 @@ export function SignalForm() {
                                 type="button"
                                 onClick={() => setSelectedSubject(subject)}
                                 className={`px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${selectedSubject === subject
-                                        ? "bg-indigo-600 text-white shadow-lg scale-105"
-                                        : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                                    ? "bg-indigo-600 text-white shadow-lg scale-105"
+                                    : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
                                     }`}
                             >
                                 {subject}
@@ -120,8 +147,8 @@ export function SignalForm() {
                                 type="button"
                                 onClick={() => setUrgency(level)}
                                 className={`px-3 py-2 rounded-lg font-medium text-sm border-2 transition-all duration-200 ${urgency === level
-                                        ? `${color} shadow-lg scale-105 border-current`
-                                        : `${color} border-transparent opacity-60 hover:opacity-100`
+                                    ? `${color} shadow-lg scale-105 border-current`
+                                    : `${color} border-transparent opacity-60 hover:opacity-100`
                                     }`}
                             >
                                 {label}
@@ -148,10 +175,10 @@ export function SignalForm() {
                     type="submit"
                     disabled={!selectedSubject || !message.trim() || isSubmitting}
                     className={`w-full py-3 px-4 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 ${isSubmitting
-                            ? "bg-indigo-400 text-white cursor-not-allowed"
-                            : selectedSubject && message.trim()
-                                ? "bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg active:scale-95"
-                                : "bg-neutral-200 text-neutral-400 cursor-not-allowed"
+                        ? "bg-indigo-400 text-white cursor-not-allowed"
+                        : selectedSubject && message.trim()
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg active:scale-95"
+                            : "bg-neutral-200 text-neutral-400 cursor-not-allowed"
                         }`}
                 >
                     {isSubmitting ? (

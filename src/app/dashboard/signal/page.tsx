@@ -113,8 +113,8 @@ export default function SignalPage() {
                 <button
                     onClick={() => setTabActive("create")}
                     className={`px-4 py-3 font-semibold text-sm sm:text-base border-b-2 transition-colors duration-200 ${tabActive === "create"
-                            ? "border-indigo-600 text-indigo-600"
-                            : "border-transparent text-neutral-600 hover:text-neutral-900"
+                        ? "border-indigo-600 text-indigo-600"
+                        : "border-transparent text-neutral-600 hover:text-neutral-900"
                         }`}
                 >
                     Create Signal
@@ -122,8 +122,8 @@ export default function SignalPage() {
                 <button
                     onClick={() => setTabActive("active")}
                     className={`px-4 py-3 font-semibold text-sm sm:text-base border-b-2 transition-colors duration-200 flex items-center gap-2 ${tabActive === "active"
-                            ? "border-indigo-600 text-indigo-600"
-                            : "border-transparent text-neutral-600 hover:text-neutral-900"
+                        ? "border-indigo-600 text-indigo-600"
+                        : "border-transparent text-neutral-600 hover:text-neutral-900"
                         }`}
                 >
                     <Activity size={18} />
