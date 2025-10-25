@@ -28,10 +28,10 @@ export default function Home() {
     { number: 4, label: "Review", highlight: " with AI Summaries" },
   ];
   const tutorSteps: Step[] = [
-    { number: 1, label: "Create", highlight: " Your Profile" },
-    { number: 2, label: "Get", highlight: " Matched Instantly" },
-    { number: 3, label: "Start", highlight: " a Live Session" },
-    { number: 4, label: "Review", highlight: " with AI Summaries" },
+    { number: 1, label: "Add", highlight: " Your Expertise" },
+    { number: 2, label: "Share", highlight: " Your Knowledge" },
+    { number: 3, label: "Connect", highlight: " with Students" },
+    { number: 4, label: "Get", highlight: " Paid" },
   ];
   return (
     <div className="min-h-screen w-full bg-linear-to-b from-white via-blue-50 to-[#43A8FF]">
