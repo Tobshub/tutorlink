@@ -1,14 +1,15 @@
 "use client";
 import Image from "next/image";
+import type { PropsWithChildren } from "react";
 
 export type TutorCardProps = {
     name: string;
     subjects: string[];
     yearsOfExperience: number;
     teachingStyle?: string[] | null;
-};
+} & PropsWithChildren;
 
-export function TutorCard({ name, subjects, yearsOfExperience }: TutorCardProps) {
+export function TutorCard({ name, subjects, yearsOfExperience, children }: TutorCardProps) {
     return (
         <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-neutral-200/60">
             <div className="relative h-40 w-full bg-neutral-100">
@@ -20,6 +21,7 @@ export function TutorCard({ name, subjects, yearsOfExperience }: TutorCardProps)
                 <div className="mt-1 text-sm text-neutral-600">
                     {yearsOfExperience} yrs
                 </div>
+                {children}
             </div>
         </div>
     );
