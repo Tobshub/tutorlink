@@ -1,47 +1,21 @@
 "use server";
 
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-import { createSupabaseServerClient } from '@/lib/supabase/server';
-
-export async function loginWithEmail(payload: { email: string; password: string }) {
-  const supabase = await createSupabaseServerClient()
-
-  const data = {
-    email: payload.email,
-    password: payload.password,
-  }
-
-  const { error } = await supabase.auth.signInWithPassword(data)
-
-  if (error) {
-    redirect('/error')
-  }
-
-  revalidatePath('/', 'layout')
-  redirect('/onboarding')
+export async function loginWithEmail(_payload: { email: string; password: string }) {
+  // With Clerk, authentication is handled by the /sign-in route
+  // Redirect users to the Clerk sign-in page
+  redirect('/sign-in')
 }
 
-export async function signup(formData: FormData) {
-  const supabase = await createSupabaseServerClient()
-
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
-
-  const { error } = await supabase.auth.signUp(data)
-
-  if (error) {
-    redirect('/error')
-  }
-
-  revalidatePath('/', 'layout')
-  redirect('/onboarding')
+export async function signup(_formData: FormData) {
+  // With Clerk, authentication is handled by the /sign-up route
+  // Redirect users to the Clerk sign-up page
+  redirect('/sign-up')
 }
 
 export async function loginWithGoogle() {
-  // Example:
-  // return await authClient.signInWithOAuth({ provider: 'google', options: { redirectTo: '/dashboard' } })
+  // Google OAuth is handled by Clerk's sign-in/sign-up pages
+  // No manual setup needed
+  redirect('/sign-in')
 }

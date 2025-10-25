@@ -14,7 +14,7 @@ export const studentRouter = createTRPCRouter({
         }))
         .mutation(async ({ ctx, input }) => {
             const existingProfile = await ctx.db.studentProfile.findUnique({
-                where: { userId: ctx.user.id },
+                where: { userId: ctx.userId },
             });
 
             if (existingProfile) {
@@ -23,7 +23,7 @@ export const studentRouter = createTRPCRouter({
 
             const profile = await ctx.db.studentProfile.create({
                 data: {
-                    userId: ctx.user.id,
+                    userId: ctx.userId,
                     goals: input.goals,
                     learningStyle: input.learningStyle,
                     preferredTutorGender: input.preferredTutorGender,
@@ -31,7 +31,7 @@ export const studentRouter = createTRPCRouter({
                 },
             });
 
-           const { embedding } = await invokeModel(`
+            const { embedding } = await invokeModel(`
 This text describes a student profile for an AI tutoring match system.
 
 Learning Goals:
@@ -45,7 +45,7 @@ ${input.learningStyle.map((l) => `- ${l}`).join("\n")}
 `);
             const res = await ctx.db.$executeRaw`UPDATE "StudentProfile" SET "embedding" = ${JSON.stringify(embedding)}::vector WHERE "id" = ${profile.id}`
             if (res !== 1) {
-              throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update profile"});
+                throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update profile" });
             }
 
             return { success: true, message: "Student profile created successfully", profile };
@@ -54,7 +54,7 @@ ${input.learningStyle.map((l) => `- ${l}`).join("\n")}
     getProfile: protectedProcedure
         .query(async ({ ctx }) => {
             const profile = await ctx.db.studentProfile.findUnique({
-                where: { userId: ctx.user.id },
+                where: { userId: ctx.userId },
             });
             return profile;
         }),
@@ -67,13 +67,13 @@ ${input.learningStyle.map((l) => `- ${l}`).join("\n")}
         }))
         .mutation(async ({ ctx, input }) => {
             const updatedProfile = await ctx.db.studentProfile.update({
-                where: { userId: ctx.user.id },
+                where: { userId: ctx.userId },
                 data: {
                     ...input,
                 },
             });
 
-           const { embedding } = await invokeModel(`
+            const { embedding } = await invokeModel(`
 This text describes a student profile for an AI tutoring match system.
 
 Learning Goals:
@@ -87,7 +87,7 @@ ${updatedProfile.learningStyle.map((l) => `- ${l}`).join("\n")}
 `);
             const res = await ctx.db.$executeRaw`UPDATE "StudentProfile" SET "embedding" = ${JSON.stringify(embedding)}::vector WHERE "id" = ${updatedProfile.id}`
             if (res !== 1) {
-              throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update profile"});
+                throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update profile" });
             }
             return { success: true, message: "Student profile updated successfully", profile: updatedProfile };
         }),
@@ -98,7 +98,7 @@ ${updatedProfile.learningStyle.map((l) => `- ${l}`).join("\n")}
     getTutorMatches: protectedProcedure
         .query(async ({ ctx }) => {
             const studentProfile = await ctx.db.studentProfile.findUnique({
-                where: { userId: ctx.user.id },
+                where: { userId: ctx.userId },
             });
 
             if (!studentProfile) {

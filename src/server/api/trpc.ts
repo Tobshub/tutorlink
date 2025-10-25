@@ -1,9 +1,9 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { auth } from "@clerk/nextjs/server";
 
 import { db } from "@/server/db";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 /**
  * 1. CONTEXT
@@ -18,15 +18,12 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const supabase = await createSupabaseServerClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { userId, sessionId } = await auth();
 
   return {
     db,
-    user,
+    userId,
+    sessionId,
     ...opts,
   };
 };
@@ -83,14 +80,12 @@ export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.user) {
+  if (!ctx.userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
     ctx: {
-      user: {
-        ...ctx.user,
-      },
+      userId: ctx.userId,
     },
   });
 });
