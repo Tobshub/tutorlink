@@ -33,7 +33,7 @@ export default function StudentSubjects() {
 
                     <div className="flex flex-wrap items-center justify-center gap-3">
                         {subjects.map((s) => (
-                            <Chip key={s} active={selected.has(s)} onClick={() => toggle(s)}>
+                            <Chip key={s} selected={selected.has(s)} onClick={() => toggle(s)}>
                                 {s}
                             </Chip>
                         ))}
