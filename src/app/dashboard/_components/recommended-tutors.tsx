@@ -26,7 +26,7 @@ export function RecommendedTutors() {
           {tutors.map((tutor) => (
             <TutorCard
               key={tutor.id}
-              name={tutor.name}
+              name={tutor.user.name ?? ''}
               subjects={[]}
               yearsOfExperience={tutor.yearsOfExperience}
             >

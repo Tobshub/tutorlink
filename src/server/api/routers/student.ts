@@ -155,26 +155,27 @@ ${updatedProfile.learningStyle.map((l) => `- ${l}`).join("\n")}
   health: publicProcedure.query(() => "Student router is healthy"),
 
   getTutorMatches: protectedProcedure.query(async ({ ctx }) => {
-    const studentProfile = await ctx.db.studentProfile.findFirst({
-      where: { user: { clerkUid: ctx.user.id } },
-    });
-
-    if (!studentProfile) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Student profile not found",
-      });
-    }
-
-    const tutors = await ctx.db.$queryRaw<
-      { id: string; userId: string; name: string; email: string; similarity: number; yearsOfExperience: number; }[]
-    >`
-                SELECT "TutorProfile".*, "User"."name", "User"."email", 1 - ("TutorProfile"."embedding"::vector <=> (SELECT "embedding"::vector FROM "StudentProfile" WHERE "id" = ${studentProfile.id})) as similarity
-                FROM "TutorProfile"
-                JOIN "User" ON "TutorProfile"."userId" = "User"."id"
-                ORDER BY similarity DESC
-                LIMIT 15
-            `;
+    // const studentProfile = await ctx.db.studentProfile.findFirst({
+    //   where: { user: { clerkUid: ctx.user.id } },
+    // });
+    //
+    // if (!studentProfile) {
+    //   throw new TRPCError({
+    //     code: "NOT_FOUND",
+    //     message: "Student profile not found",
+    //   });
+    // }
+    //
+    // const tutors = await ctx.db.$queryRaw<
+    //   { id: string; userId: string; name: string; email: string; similarity: number; yearsOfExperience: number; }[]
+    // >`
+    //             SELECT "TutorProfile".*, "User"."name", "User"."email", 1 - ("TutorProfile"."embedding"::vector <=> (SELECT "embedding"::vector FROM "StudentProfile" WHERE "id" = ${studentProfile.id})) as similarity
+    //             FROM "TutorProfile"
+    //             JOIN "User" ON "TutorProfile"."userId" = "User"."id"
+    //             ORDER BY similarity DESC
+    //             LIMIT 15
+    //         `;
+    const tutors = await ctx.db.tutorProfile.findMany({ take: 10, include: { user: true } });
 
     return tutors;
   }),
