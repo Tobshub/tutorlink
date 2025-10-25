@@ -1,3 +1,5 @@
+/** eslint-disable @typescript-eslint/no-unsafe-assignment */
+/** eslint-disable @typescript-eslint/no-unsafe-call */
 import { env } from "../env.js";
 import {
   BedrockRuntimeClient,
