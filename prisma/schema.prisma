@@ -89,3 +89,13 @@ model StudentGrades {
   grade        String
   yearObtained Int
 }
+
+model Signal {
+  id        String   @id @default(cuid())
+  studentId String
+  subject   String
+  message   String
+  urgency   Int
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+}
