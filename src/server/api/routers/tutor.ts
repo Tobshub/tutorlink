@@ -7,11 +7,11 @@ import { TRPCError } from "@trpc/server";
 export const tutorRouter = createTRPCRouter({
     createProfile: protectedProcedure
         .input(z.object({
-            subjectInterests: z.array(z.string()),
-            teachingLevels: z.array(z.string()),
-            yearsOfExperience: z.number(),
-            teachingStyle: z.array(z.string()),
-            preferredSessionTypes: z.array(z.string()),
+            subjectInterests: z.array(z.string()).min(1, "At least one subject is required"),
+            teachingLevels: z.array(z.string()).min(1, "At least one teaching level is required"),
+            yearsOfExperience: z.number().min(0, "Years of experience cannot be negative"),
+            teachingStyle: z.array(z.string()).min(1, "At least one teaching style is required"),
+            preferredSessionTypes: z.array(z.string()).min(1, "At least one session type is required"),
         }))
         .mutation(async ({ ctx, input }) => {
             const clerkUser = ctx.user;
@@ -64,7 +64,7 @@ export const tutorRouter = createTRPCRouter({
 
                 const { embedding } = await invokeModel(embeddingText);
 
-                await ctx.db.tutorProfile.update({ where: { id: newProfile.id }, data: { embedding }});
+                await ctx.db.tutorProfile.update({ where: { id: newProfile.id }, data: { embedding } });
 
                 return newProfile;
             });
@@ -121,7 +121,7 @@ ${updatedProfile.teachingLevels.map((l) => `- ${l}`).join("\n")}
 Teaching Style:
 ${updatedProfile.teachingStyle.map((t) => `- ${t}`).join("\n")}
 `);
-            await ctx.db.tutorProfile.update({ where: { id: updatedProfile.id}, data: { embedding}});
+            await ctx.db.tutorProfile.update({ where: { id: updatedProfile.id }, data: { embedding } });
 
             return { success: true, message: "Tutor profile updated successfully", profile: updatedProfile };
         }),
