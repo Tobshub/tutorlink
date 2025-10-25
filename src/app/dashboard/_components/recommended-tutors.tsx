@@ -28,7 +28,7 @@ export function RecommendedTutors() {
               key={tutor.id}
               name={tutor.name}
               subjects={[]}
-              yearsOfExperience={0}
+              yearsOfExperience={tutor.yearsOfExperience}
             >
               <div className="mt-4 flex gap-2">
                 <button
