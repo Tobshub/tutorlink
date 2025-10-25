@@ -14,7 +14,7 @@ export const studentRouter = createTRPCRouter({
         }))
         .mutation(async ({ ctx, input }) => {
             const existingProfile = await ctx.db.studentProfile.findUnique({
-                where: { userId: ctx.userId },
+                where: { userId: ctx.user.id },
             });
 
             if (existingProfile) {
@@ -23,7 +23,7 @@ export const studentRouter = createTRPCRouter({
 
             const profile = await ctx.db.studentProfile.create({
                 data: {
-                    userId: ctx.userId,
+                    userId: ctx.user.id,
                     goals: input.goals,
                     learningStyle: input.learningStyle,
                     preferredTutorGender: input.preferredTutorGender,
@@ -54,7 +54,7 @@ ${input.learningStyle.map((l) => `- ${l}`).join("\n")}
     getProfile: protectedProcedure
         .query(async ({ ctx }) => {
             const profile = await ctx.db.studentProfile.findUnique({
-                where: { userId: ctx.userId },
+                where: { userId: ctx.user.id },
             });
             return profile;
         }),
@@ -67,7 +67,7 @@ ${input.learningStyle.map((l) => `- ${l}`).join("\n")}
         }))
         .mutation(async ({ ctx, input }) => {
             const updatedProfile = await ctx.db.studentProfile.update({
-                where: { userId: ctx.userId },
+                where: { userId: ctx.user.id },
                 data: {
                     ...input,
                 },
@@ -98,7 +98,7 @@ ${updatedProfile.learningStyle.map((l) => `- ${l}`).join("\n")}
     getTutorMatches: protectedProcedure
         .query(async ({ ctx }) => {
             const studentProfile = await ctx.db.studentProfile.findUnique({
-                where: { userId: ctx.userId },
+                where: { userId: ctx.user.id },
             });
 
             if (!studentProfile) {
@@ -108,7 +108,7 @@ ${updatedProfile.learningStyle.map((l) => `- ${l}`).join("\n")}
             const tutors = await ctx.db.$queryRaw<{ id: string; name: string; email: string; similarity: number }[]>`
                 SELECT "TutorProfile".*, "User"."name", "User"."email", 1 - ("TutorProfile"."embedding" <=> (SELECT "embedding" FROM "StudentProfile" WHERE "id" = ${studentProfile.id})) as similarity
                 FROM "TutorProfile"
-                JOIN "User" ON "TutorProfile"."userId" = "User"."id"
+                JOIN "User" ON "TutorProfile"."user.id" = "User"."id"
                 ORDER BY similarity DESC
                 LIMIT 10
             `;

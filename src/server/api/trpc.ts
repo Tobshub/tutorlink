@@ -1,7 +1,8 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { auth } from "@clerk/nextjs/server";
+import {  currentUser } from "@clerk/nextjs/server";
+import { type User } from "@clerk/nextjs/server";
 
 import { db } from "@/server/db";
 
@@ -10,19 +11,19 @@ import { db } from "@/server/db";
  */
 
 interface CreateContextInnerOptions {
-  userId: string | null;
+  user: User | null;
 }
 
 async function createContextInner(opts: CreateContextInnerOptions) {
   return {
     db,
-    userId: opts.userId,
+    user: opts.user,
   };
 }
 
 export async function createTRPCContext(_opts: { headers: Headers }) {
-  const { userId } = await auth();
-  return createContextInner({ userId });
+  const user = await currentUser();
+  return createContextInner({ user});
 }
 
 export type Context = Awaited<ReturnType<typeof createContextInner>>;
@@ -86,7 +87,7 @@ export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.userId) {
+  if (!ctx.user?.id) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "Not authenticated",
@@ -94,7 +95,7 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   }
   return next({
     ctx: {
-      userId: ctx.userId,
+      user: ctx.user,
       db: ctx.db,
     },
   });

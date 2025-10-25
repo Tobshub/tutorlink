@@ -15,7 +15,7 @@ export const tutorRouter = createTRPCRouter({
         }))
         .mutation(async ({ ctx, input }) => {
             const existingProfile = await ctx.db.tutorProfile.findUnique({
-                where: { userId: ctx.userId },
+                where: { userId: ctx.user.id },
             });
 
             if (existingProfile) {
@@ -24,7 +24,7 @@ export const tutorRouter = createTRPCRouter({
 
             const profile = await ctx.db.tutorProfile.create({
                 data: {
-                    userId: ctx.userId,
+                    userId: ctx.user.id,
                     subjectInterests: input.subjectInterests,
                     teachingLevels: input.teachingLevels,
                     yearsOfExperience: input.yearsOfExperience,
@@ -55,7 +55,7 @@ ${input.teachingStyle.join(", ")}
     getProfile: protectedProcedure
         .query(async ({ ctx }) => {
             const profile = await ctx.db.tutorProfile.findUnique({
-                where: { userId: ctx.userId },
+                where: { userId: ctx.user.id },
             });
             return profile;
         }),
@@ -70,7 +70,7 @@ ${input.teachingStyle.join(", ")}
         }))
         .mutation(async ({ ctx, input }) => {
             const updatedProfile = await ctx.db.tutorProfile.update({
-                where: { userId: ctx.userId },
+                where: { userId: ctx.user.id },
                 data: {
                     ...input,
                 },

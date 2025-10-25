@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 
 const isProtectedRoute = createRouteMatcher([
     "/dashboard(.*)",
-    "/api/trpc(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
