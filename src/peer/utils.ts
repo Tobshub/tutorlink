@@ -4,7 +4,7 @@ import { type MediaConnection, Peer, type PeerOptions } from "peerjs";
 export const peerBuildConnection = (id?: string): Peer => {
   const options: PeerOptions = {
     host: env.NEXT_PUBLIC_PEER_HOST,
-    port: env.NEXT_PUBLIC_PEER_PORT,
+    // port: env.NEXT_PUBLIC_PEER_PORT,
     path: "/peerjs",
     config: env.NEXT_PUBLIC_ICE_SERVER
       ? {

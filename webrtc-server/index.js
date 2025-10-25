@@ -17,7 +17,7 @@ const server = app.listen(port, () => {
 });
 
 const peerServer = ExpressPeerServer(server, {
-  path: '/',
+  path: '/peerjs',
 });
 
 peerServer.on("connection", (client) => {
