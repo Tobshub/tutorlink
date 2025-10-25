@@ -108,7 +108,7 @@ ${updatedProfile.learningStyle.map((l) => `- ${l}`).join("\n")}
             const tutors = await ctx.db.$queryRaw<{ id: string; name: string; email: string; similarity: number }[]>`
                 SELECT "TutorProfile".*, "User"."name", "User"."email", 1 - ("TutorProfile"."embedding" <=> (SELECT "embedding" FROM "StudentProfile" WHERE "id" = ${studentProfile.id})) as similarity
                 FROM "TutorProfile"
-                JOIN "User" ON "TutorProfile"."user.id" = "User"."id"
+                JOIN "User" ON "TutorProfile"."userId" = "User"."id"
                 ORDER BY similarity DESC
                 LIMIT 10
             `;
