@@ -86,7 +86,7 @@ Teaching Levels:
 ${updatedProfile.teachingLevels.map((l) => `- ${l}`).join("\n")}
 
 Teaching Style:
-${updatedProfile.teachingStyle}
+${updatedProfile.teachingStyle.map((t) => `- ${t}`).join("\n")}
 `);
             const res = await ctx.db.$executeRaw`UPDATE "TutorProfile" SET "embedding" = ${JSON.stringify(embedding)}::vector WHERE "id" = ${updatedProfile.id}`
             if (res !== 1) {
