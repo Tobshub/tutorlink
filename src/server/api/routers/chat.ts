@@ -1,13 +1,17 @@
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 export const chatRouter = createTRPCRouter({
   getConversations: protectedProcedure.query(async ({ ctx }) => {
+    const user = await ctx.db.user.findUnique({ where: { clerkUid: ctx.user.id }});
+    if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
+
     return ctx.db.conversation.findMany({
       where: {
         User: {
           some: {
-            id: ctx.user.id,
+            id: user.id,
           },
         },
       },
@@ -48,25 +52,31 @@ export const chatRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({ where: { clerkUid: ctx.user.id }});
+      if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
+
       return ctx.db.message.create({
         data: {
           conversationId: input.conversationId,
           content: input.content,
-          senderId: ctx.user.id,
+          senderId: user.id,
         },
       });
     }),
 
   createConversation: protectedProcedure
-    .input(z.object({ tutorId: z.string() }))
+    .input(z.object({ tutorId: z.string() })) // tutorId is the CUID of the user record
     .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({ where: { clerkUid: ctx.user.id }});
+      if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "Current user not found." });
+
       const existingConversation = await ctx.db.conversation.findFirst({
         where: {
           AND: [
             {
               User: {
                 some: {
-                  id: ctx.user.id,
+                  id: user.id,
                 },
               },
             },
@@ -88,7 +98,7 @@ export const chatRouter = createTRPCRouter({
       const newConversation = await ctx.db.conversation.create({
         data: {
           User: {
-            connect: [{ clerkUid: ctx.user.id }, { id: input.tutorId }],
+            connect: [{ id: user.id }, { id: input.tutorId }],
           },
         },
       });
