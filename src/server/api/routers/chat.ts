@@ -56,4 +56,43 @@ export const chatRouter = createTRPCRouter({
         },
       });
     }),
+
+  createConversation: protectedProcedure
+    .input(z.object({ tutorId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const existingConversation = await ctx.db.conversation.findFirst({
+        where: {
+          AND: [
+            {
+              User: {
+                some: {
+                  id: ctx.user.id,
+                },
+              },
+            },
+            {
+              User: {
+                some: {
+                  id: input.tutorId,
+                },
+              },
+            },
+          ],
+        },
+      });
+
+      if (existingConversation) {
+        return { conversationId: existingConversation.id };
+      }
+
+      const newConversation = await ctx.db.conversation.create({
+        data: {
+          User: {
+            connect: [{ id: ctx.user.id }, { id: input.tutorId }],
+          },
+        },
+      });
+
+      return { conversationId: newConversation.id };
+    }),
 });
