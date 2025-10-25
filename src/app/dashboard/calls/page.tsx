@@ -32,6 +32,18 @@ export default function CallsPage() {
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
+        const params = new URLSearchParams(window.location.search);
+        const remoteId = params.get('userId');
+        if (remoteId) {
+          setRemotePeerId(remoteId);
+          const outgoingCall = peerInstance.call(remoteId, stream);
+          outgoingCall.on("stream", (remoteStream) => {
+            if (remoteVideoRef.current) {
+              remoteVideoRef.current.srcObject = remoteStream;
+            }
+          });
+          setCall(outgoingCall);
+        }
       });
     });
 
