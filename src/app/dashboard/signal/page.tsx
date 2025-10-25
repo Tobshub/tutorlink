@@ -1,8 +1,9 @@
 "use client";
 
 import { SignalForm } from "./_components/signal-form";
-import { Activity, Clock, Zap } from "lucide-react";
+import { Activity, Clock, Trash2, Zap } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 
 type SignalData = {
@@ -24,6 +25,8 @@ const urgencyConfig = {
 };
 
 function SignalCard({ signal }: { signal: SignalData }) {
+    const router = useRouter();
+    const acceptSignal = api.signal.acceptSignal.useMutation();
     const config = urgencyConfig[signal.urgency as keyof typeof urgencyConfig];
     const timeAgo = new Date(signal.createdAt);
     const now = new Date();
@@ -58,16 +61,39 @@ function SignalCard({ signal }: { signal: SignalData }) {
                 <p className="text-sm text-neutral-700 line-clamp-2">{signal.message}</p>
             </div>
 
-            <button className="w-full mt-3 px-3 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-colors duration-200 active:scale-95">
-                Accept Signal
+            <button
+                className="w-full mt-3 px-3 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-colors duration-200 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                disabled={acceptSignal.isPending}
+                onClick={() => {
+                    acceptSignal.mutate(
+                        { signalId: signal.id },
+                        {
+                            onSuccess: (res) => {
+                                const to = res?.redirectTo ?? `/dashboard/messages/${res.conversationId}`;
+                                router.push(to);
+                            },
+                        }
+                    );
+                }}
+            >
+                {acceptSignal.isPending ? "Accepting..." : "Accept Signal"}
             </button>
         </div>
     );
 }
 
 export default function SignalPage() {
-    const [tabActive, setTabActive] = useState<"create" | "active">("create");
-    const { data: activeSignals = [], isLoading } = api.signal.getSignals.useQuery();
+    const [tabActive, setTabActive] = useState<"create" | "manage">("create");
+    const utils = api.useUtils();
+    const { data: role } = api.signal.getViewerRole.useQuery();
+    const isTutor = role === "TUTOR";
+    const { data: activeSignals = [], isLoading: isLoadingActive } = api.signal.getSignals.useQuery(undefined, { enabled: isTutor });
+    const { data: mySignals = [], isLoading: isLoadingMy } = api.signal.getMySignals.useQuery(undefined, { enabled: !isTutor });
+    const deleteSignal = api.signal.deleteSignal.useMutation({
+        onSuccess: async () => {
+            await utils.signal.getMySignals.invalidate();
+        },
+    });
 
     return (
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-0">
@@ -84,49 +110,40 @@ export default function SignalPage() {
                 </p>
             </div>
 
-            {/* Tabs */}
-            <div className="flex gap-4 mb-8 border-b border-neutral-200">
-                <button
-                    onClick={() => setTabActive("create")}
-                    className={`px-4 py-3 font-semibold text-sm sm:text-base border-b-2 transition-colors duration-200 ${tabActive === "create"
-                        ? "border-indigo-600 text-indigo-600"
-                        : "border-transparent text-neutral-600 hover:text-neutral-900"
-                        }`}
-                >
-                    Create Signal
-                </button>
-                <button
-                    onClick={() => setTabActive("active")}
-                    className={`px-4 py-3 font-semibold text-sm sm:text-base border-b-2 transition-colors duration-200 flex items-center gap-2 ${tabActive === "active"
-                        ? "border-indigo-600 text-indigo-600"
-                        : "border-transparent text-neutral-600 hover:text-neutral-900"
-                        }`}
-                >
-                    <Activity size={18} />
-                    Active Signals
-                    <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-full">
-                        {Array.isArray(activeSignals) ? activeSignals.length : 0}
-                    </span>
-                </button>
-            </div>
+            {/* Tabs (students only) */}
+            {!isTutor && (
+                <div className="flex gap-4 mb-8 border-b border-neutral-200">
+                    <button
+                        onClick={() => setTabActive("create")}
+                        className={`px-4 py-3 font-semibold text-sm sm:text-base border-b-2 transition-colors duration-200 ${tabActive === "create"
+                            ? "border-indigo-600 text-indigo-600"
+                            : "border-transparent text-neutral-600 hover:text-neutral-900"
+                            }`}
+                    >
+                        Create Signal
+                    </button>
+                    <button
+                        onClick={() => setTabActive("manage")}
+                        className={`px-4 py-3 font-semibold text-sm sm:text-base border-b-2 transition-colors duration-200 flex items-center gap-2 ${tabActive === "manage"
+                            ? "border-indigo-600 text-indigo-600"
+                            : "border-transparent text-neutral-600 hover:text-neutral-900"
+                            }`}
+                    >
+                        <Activity size={18} />
+                        Manage Signals
+                        <span className="px-2 py-0.5 bg-neutral-100 text-neutral-700 text-xs font-bold rounded-full">
+                            {Array.isArray(mySignals) ? mySignals.length : 0}
+                        </span>
+                    </button>
+                </div>
+            )}
 
             {/* Tab Content */}
             <div className="mb-12">
-                {tabActive === "create" ? (
-                    <div className="space-y-8">
-                        <div className="p-6 bg-linear-to-r from-indigo-50 to-blue-50 border border-indigo-100 rounded-lg">
-                            <h2 className="text-xl font-bold text-neutral-900 mb-2">
-                                🚀 Need help fast?
-                            </h2>
-                            <p className="text-neutral-700">
-                                Send a signal and connect with available tutors in seconds. The more urgent your request, the faster you&apos;ll get matched.
-                            </p>
-                        </div>
-                        <SignalForm />
-                    </div>
-                ) : (
+                {/* Tutor view: just Active Signals */}
+                {isTutor ? (
                     <div className="space-y-4">
-                        {isLoading ? (
+                        {isLoadingActive ? (
                             <div className="text-center py-12">
                                 <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
                                 <p className="text-neutral-600">Loading active signals...</p>
@@ -147,6 +164,82 @@ export default function SignalPage() {
                                 <Activity size={48} className="mx-auto text-neutral-300 mb-4" />
                                 <p className="text-neutral-600 text-lg">No active signals right now</p>
                                 <p className="text-neutral-500 text-sm">Check back soon!</p>
+                            </div>
+                        )}
+                    </div>
+                ) : tabActive === "create" ? (
+                    <div className="space-y-8">
+                        <div className="p-6 bg-linear-to-r from-indigo-50 to-blue-50 border border-indigo-100 rounded-lg">
+                            <h2 className="text-xl font-bold text-neutral-900 mb-2">
+                                🚀 Need help fast?
+                            </h2>
+                            <p className="text-neutral-700">
+                                Send a signal and connect with available tutors in seconds. The more urgent your request, the faster you&apos;ll get matched.
+                            </p>
+                        </div>
+                        <SignalForm />
+                    </div>
+                ) : (
+                    <div className="space-y-4">
+                        {isLoadingMy ? (
+                            <div className="text-center py-12">
+                                <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+                                <p className="text-neutral-600">Loading your signals...</p>
+                            </div>
+                        ) : Array.isArray(mySignals) && mySignals.length > 0 ? (
+                            <>
+                                <p className="text-sm text-neutral-600 mb-4">
+                                    You have {mySignals.length} signals
+                                </p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {mySignals.map((signal: SignalData) => {
+                                        const config = urgencyConfig[signal.urgency as keyof typeof urgencyConfig];
+                                        const timeAgo = new Date(signal.createdAt);
+                                        const now = new Date();
+                                        const diffMs = now.getTime() - timeAgo.getTime();
+                                        const diffMins = Math.floor(diffMs / 60000);
+                                        const displayTime = diffMins < 1 ? "just now" : `${diffMins}m ago`;
+                                        const cancellable = signal.status === "pending";
+                                        return (
+                                            <div key={signal.id} className="p-4 border border-neutral-200 rounded-lg bg-white">
+                                                <div className="flex items-start justify-between mb-3">
+                                                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                                                        <div className={`px-2 py-1 rounded text-xs font-semibold ${config.badge} border-2 ${config.bg} ${config.text}`}>
+                                                            {config.label}
+                                                        </div>
+                                                    </div>
+                                                    <span className={`text-xs font-semibold px-2 py-1 rounded ${signal.status === "pending" ? "bg-yellow-100 text-yellow-900" : signal.status === "accepted" ? "bg-green-100 text-green-900" : signal.status === "rejected" ? "bg-red-100 text-red-900" : "bg-neutral-100 text-neutral-700"}`}>
+                                                        {signal.status}
+                                                    </span>
+                                                </div>
+                                                <div className="mb-3">
+                                                    <span className="inline-block px-2.5 py-1 bg-indigo-100 text-indigo-900 text-xs font-semibold rounded-full mb-2">
+                                                        {signal.subject}
+                                                    </span>
+                                                    <p className="text-sm text-neutral-700 line-clamp-2">{signal.message}</p>
+                                                    <p className="text-xs text-neutral-500 flex items-center gap-1 mt-2">
+                                                        <Clock size={12} />
+                                                        {displayTime}
+                                                    </p>
+                                                </div>
+                                                <button
+                                                    className={`w-full mt-2 px-3 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 flex items-center justify-center gap-2 ${cancellable ? "bg-red-600 text-white hover:bg-red-700" : "bg-neutral-200 text-neutral-500 cursor-not-allowed"}`}
+                                                    disabled={!cancellable || deleteSignal.isPending}
+                                                    onClick={() => deleteSignal.mutate({ signalId: signal.id })}
+                                                >
+                                                    <Trash2 size={16} />
+                                                    {deleteSignal.isPending ? "Cancelling..." : "Cancel Signal"}
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="text-center py-12">
+                                <Activity size={48} className="mx-auto text-neutral-300 mb-4" />
+                                <p className="text-neutral-600 text-lg">You don&apos;t have any signals yet</p>
+                                <p className="text-neutral-500 text-sm">Create one to get help fast</p>
                             </div>
                         )}
                     </div>

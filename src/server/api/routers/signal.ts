@@ -1,10 +1,21 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc";
+import { TRPCError } from "@trpc/server";
 import { broadcastToTutors, notifyStudent } from "@/server/wsBridge";
 
 //implement signals from users to tutors
 
 export const signalRouter = createTRPCRouter({
+    // Returns the current viewer's role for conditional UI rendering
+    getViewerRole: protectedProcedure.query(async ({ ctx }) => {
+        const me = await ctx.db.user.findUnique({
+            where: { id: ctx.user.id },
+            select: { role: true },
+        });
+        if (!me) throw new TRPCError({ code: "UNAUTHORIZED" });
+        return me.role;
+    }),
+
     createSignal: protectedProcedure
         .input(z.object({
             message: z.string().min(1),
@@ -26,7 +37,6 @@ export const signalRouter = createTRPCRouter({
     updateSignal: protectedProcedure
         .input(z.object({ signalId: z.string(), studentId: z.string(), status: z.string() }))
         .mutation(async ({ input, ctx }) => {
-            const signal = await ctx.db.signal.findUnique({ where: { id: input.signalId } });
             if (input.status == "accepted") {
                 await notifyStudent(input.studentId, {
                     event: "signal-accepted",
@@ -49,7 +59,7 @@ export const signalRouter = createTRPCRouter({
             signalId: z.string(), status: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
-            const updatedSignal = await ctx.db.signal.update({
+            await ctx.db.signal.update({
                 where: { id: input.signalId },
                 data: {
                     ...input,
@@ -59,10 +69,104 @@ export const signalRouter = createTRPCRouter({
         }),
     getSignals: protectedProcedure
         .query(async ({ ctx }) => {
+            // Only tutors can see active signals
+            const me = await ctx.db.user.findUnique({
+                where: { id: ctx.user.id },
+                select: { role: true },
+            });
+            if (me?.role !== "TUTOR") {
+                throw new TRPCError({ code: "FORBIDDEN", message: "Only tutors can view signals" });
+            }
             const signals = await ctx.db.signal.findMany({
                 where: { status: "pending" },
+                orderBy: { createdAt: "desc" },
+                take: 50,
             });
             return signals;
+        }),
+
+    // List signals created by the current user (student)
+    getMySignals: protectedProcedure.query(async ({ ctx }) => {
+        const signals = await ctx.db.signal.findMany({
+            where: { studentId: ctx.user.id },
+            orderBy: { createdAt: "desc" },
+        });
+        return signals;
+    }),
+
+    // Cancel (delete) a signal owned by the current user when still pending
+    deleteSignal: protectedProcedure
+        .input(z.object({ signalId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const signal = await ctx.db.signal.findUnique({ where: { id: input.signalId } });
+            if (!signal) throw new TRPCError({ code: "NOT_FOUND", message: "Signal not found" });
+            if (signal.studentId !== ctx.user.id) {
+                throw new TRPCError({ code: "FORBIDDEN", message: "You can only cancel your own signals" });
+            }
+            if (signal.status !== "pending") {
+                throw new TRPCError({ code: "CONFLICT", message: "Only pending signals can be cancelled" });
+            }
+            await ctx.db.signal.delete({ where: { id: input.signalId } });
+            return { success: true, message: "Signal cancelled" };
+        }),
+
+    acceptSignal: protectedProcedure
+        .input(z.object({ signalId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            // Guard: Only tutors can accept signals
+            const me = await ctx.db.user.findUnique({
+                where: { id: ctx.user.id },
+                select: { id: true, role: true },
+            });
+            if (me?.role !== "TUTOR") {
+                throw new TRPCError({ code: "FORBIDDEN", message: "Only tutors can accept signals" });
+            }
+
+            // Fetch signal
+            const signal = await ctx.db.signal.findUnique({ where: { id: input.signalId } });
+            if (!signal) {
+                throw new TRPCError({ code: "NOT_FOUND", message: "Signal not found" });
+            }
+            if (signal.status !== "pending") {
+                throw new TRPCError({ code: "CONFLICT", message: "Signal already handled" });
+            }
+
+            // TODO: Add transactional handling, concurrency locks to avoid double-accept
+            // Create or reuse a conversation between tutor (me.id) and student (signal.studentId)
+            const conversation = await ctx.db.conversation.create({
+                data: {
+                    User: {
+                        connect: [
+                            { id: me.id },
+                            { id: signal.studentId },
+                        ],
+                    },
+                },
+            });
+
+            // Update signal status
+            await ctx.db.signal.update({
+                where: { id: input.signalId },
+                data: { status: "accepted" },
+            });
+
+            // Notify student via WS bridge (best-effort)
+            try {
+                await notifyStudent(signal.studentId, {
+                    event: "signal-accepted",
+                    data: { signalId: input.signalId, tutorId: me.id, conversationId: conversation.id },
+                });
+            } catch (e) {
+                // non-fatal
+                console.warn("notifyStudent failed", e);
+            }
+
+            return {
+                success: true,
+                message: "Signal accepted",
+                conversationId: conversation.id,
+                redirectTo: `/dashboard/messages/${conversation.id}`,
+            };
         }),
     health: publicProcedure.query(() => "Signal router is healthy"),
 });
