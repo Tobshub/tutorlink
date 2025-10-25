@@ -18,7 +18,7 @@ export default function ChatPage() {
   const sendMessage = api.chat.sendMessage.useMutation();
   const [content, setContent] = useState('');
 
-  const otherUser = messages?.[0]?.conversation.users.find(
+  const otherUser = messages?.[0]?.conversation?.User.find(
     (u) => u.id !== user?.id
   );
 
@@ -26,7 +26,7 @@ export default function ChatPage() {
     socket.emit('join', conversationId);
 
     socket.on('message', () => {
-      refetch();
+      void refetch();
     });
 
     return () => {

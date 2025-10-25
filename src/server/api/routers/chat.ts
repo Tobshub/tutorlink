@@ -5,14 +5,14 @@ export const chatRouter = createTRPCRouter({
   getConversations: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.conversation.findMany({
       where: {
-        users: {
+        User: {
           some: {
             id: ctx.user.id,
           },
         },
       },
       include: {
-        users: true,
+        User: true,
         messages: {
           orderBy: {
             createdAt: 'desc',
@@ -32,6 +32,7 @@ export const chatRouter = createTRPCRouter({
         },
         include: {
           sender: true,
+          conversation: { include: { User: true }},
         },
         orderBy: {
           createdAt: 'asc',

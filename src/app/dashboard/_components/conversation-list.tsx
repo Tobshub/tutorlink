@@ -14,7 +14,7 @@ export function ConversationList() {
 
   return (
     <div className="space-y-2">
-      {conversations && conversations.length
+      {conversations?.length
         ? conversations?.map((conversation) => (
             <div
               key={conversation.id}
@@ -24,7 +24,7 @@ export function ConversationList() {
               }
             >
               <p className="font-semibold">
-                {conversation.users.map((user) => user.name).join(", ")}
+                {conversation.User.map((user) => user.name).join(", ")}
               </p>
               <p className="text-sm text-gray-500">
                 {conversation.messages[0]?.content}
