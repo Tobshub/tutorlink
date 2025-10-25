@@ -20,7 +20,8 @@
     "preview": "next build && next start",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "embed": "ts-node ./src/server/bedrock.ts"
+    "embed": "ts-node ./src/server/bedrock.ts",
+    "db:seed": "ts-node scripts/seed.ts"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.917.0",
@@ -53,13 +54,16 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@clerk/clerk-sdk-node": "^5.1.6",
     "@eslint/eslintrc": "^3.3.1",
+    "@faker-js/faker": "^10.1.0",
     "@tailwindcss/postcss": "^4.0.15",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.4",
     "@types/node": "^20.14.10",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "dotenv": "^17.2.3",
     "eslint": "^9.23.0",
     "eslint-config-next": "^15.2.3",
     "postcss": "^8.5.3",
